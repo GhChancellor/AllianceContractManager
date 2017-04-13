@@ -1,0 +1,32 @@
+<eveapi version="2">
+<currentTime>2016-10-18 12:28:29</currentTime>
+<result>
+<rowset name="contractList" key="contractID" columns="contractID,issuerID,issuerCorpID,assigneeID,acceptorID,startStationID,endStationID,type,status,title,forCorp,availability,dateIssued,dateExpired,dateAccepted,numDays,dateCompleted,price,reward,collateral,buyout,volume">
+
+    <!-- Completed -->
+<row contractID="200" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="653070471" 
+ startStationID="1021669282268" endStationID="1021669282268" type="ItemExchange" status="Completed" title="Ishtar Co2" forCorp="1" 
+ availability="Private" dateIssued="2016-09-19 13:59:58" dateExpired="2016-10-03 14:59:58" dateAccepted="2016-09-23 02:35:14" numDays="0" 
+ dateCompleted="2016-09-23 02:35:14" price="299000000.00" reward="0.00" collateral="0.00" buyout="0.00" volume="115000"/>
+
+<row contractID="201" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="653070471" 
+ startStationID="1021669282268" endStationID="1021669282268" type="ItemExchange" status="Completed" title="Ishtar Co2" forCorp="1" 
+ availability="Private" dateIssued="2016-09-19 12:59:59" dateExpired="2016-10-03 14:59:58" dateAccepted="2016-09-23 02:35:14" numDays="0" 
+ dateCompleted="2016-09-23 02:35:15" price="299000000.00" reward="0.00" collateral="0.00" buyout="0.00" volume="115000"/>
+        
+    <!-- Outstanding -->
+<row contractID="300" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
+ endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Omen Navy Issue Co2" forCorp="1" availability="Private" 
+ dateIssued="2016-10-09 00:14:26" dateExpired="2018-10-23 00:19:26" dateAccepted="" numDays="0" dateCompleted="" price="110000000.00" 
+ reward="0.00" collateral="0.00" buyout="0.00" volume="101000"/>    
+
+<row contractID="301" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
+ endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Omen Navy Issue Co2" forCorp="1" availability="Private" 
+ dateIssued="2016-10-09 00:17:27" dateExpired="2018-10-23 00:19:27" dateAccepted="" numDays="0" dateCompleted="" price="110000000.00" 
+ reward="0.00" collateral="0.00" buyout="0.00" volume="101000"/>
+        
+
+</rowset>
+</result>
+<cachedUntil>2016-10-18 12:42:29</cachedUntil>
+</eveapi>
