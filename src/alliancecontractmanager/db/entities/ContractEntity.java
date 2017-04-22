@@ -70,7 +70,7 @@ import javax.persistence.Temporal;
 
 // Get all contracts avoid contracts with the same name
 @NamedQuery(name = "getContractsTitleAvoidDuplicate",
-  query = "SELECT a FROM ContractEntity a GROUP BY a.title, a.id"),
+  query = "SELECT a.title FROM ContractEntity a GROUP BY a.title"),
 
 // Da modificare tutti e convertire in selezione per utente e contratto
 // Get all contract from DB

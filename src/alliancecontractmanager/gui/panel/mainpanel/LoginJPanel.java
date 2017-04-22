@@ -225,7 +225,7 @@ public class LoginJPanel extends javax.swing.JPanel {
             }
 
             UserApiEntity userApiEntity = 
-             new UserApiEntity(keyIdValue, verificationCodeValue, nameCharacher);   
+             new UserApiEntity(keyIdValue, verificationCodeValue, nameCharacher, true);   
 
 
 //            if ( ManagerLogin.getIstance().checkDuplication(login.getUrlKeyIdValue()) == true ){
@@ -258,13 +258,13 @@ public class LoginJPanel extends javax.swing.JPanel {
     
     private  List < UserApiEntity > addUserDBG(){
         List < UserApiEntity > apiEntitys = new ArrayList<>();
-        UserApiEntity userApiEntity = new UserApiEntity("111", "222", "lele");
+        UserApiEntity userApiEntity = new UserApiEntity("111", "222", "lele", true);
         apiEntitys.add(userApiEntity);
         
-        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca");
+        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca", true);
         apiEntitys.add(userApiEntity02);
         
-        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo");
+        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", true);
         apiEntitys.add(userApiEntity03);
         
         return apiEntitys;

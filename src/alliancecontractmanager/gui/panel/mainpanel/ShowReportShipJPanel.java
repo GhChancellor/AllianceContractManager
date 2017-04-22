@@ -91,6 +91,12 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
 
         ShowNameShipJPanel_Continer.setBackground(new java.awt.Color(51, 255, 51));
 
+        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jScrollPane1MouseReleased(evt);
+            }
+        });
+
         JTableShowReportShip.setModel(jTableShowReportShipModel1);
         jScrollPane1.setViewportView(JTableShowReportShip);
         if (JTableShowReportShip.getColumnModel().getColumnCount() > 0) {
@@ -230,6 +236,10 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
             
         }        
     }//GEN-LAST:event_jComboBoxUserActionPerformed
+
+    private void jScrollPane1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseReleased
+
+    }//GEN-LAST:event_jScrollPane1MouseReleased
 
     /**
      * Write Value To jTable in ShowReportShipJPanel

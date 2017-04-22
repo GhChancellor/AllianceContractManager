@@ -5,13 +5,11 @@
  */
 package alliancecontractmanager.logic.manager;
 
-import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.gui.frame.ShowContractJFrame;
-import alliancecontractmanager.gui.frame.ShowRemainShipsJFrame;
-import alliancecontractmanager.gui.frame.ShowReportShipJFrame;
+import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLUser;
 import alliancecontractmanager.logic.xml.ContractXml;
 import java.util.ArrayList;
@@ -51,13 +49,13 @@ public class MasterManager {
 //            System.out.println(""+contractEntity.getTitle());
 //        }
         
-        ShowContractJFrame showContractJFrame = new ShowContractJFrame();
-        showContractJFrame.setVisible(true);
-        showContractJFrame.setLocationRelativeTo(showContractJFrame);
-        
-        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
-        showReportShipJFrame.setVisible(true);
-        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
+//        ShowContractJFrame showContractJFrame = new ShowContractJFrame();
+//        showContractJFrame.setVisible(true);
+//        showContractJFrame.setLocationRelativeTo(showContractJFrame);
+//        
+//        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
+//        showReportShipJFrame.setVisible(true);
+//        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
         
 //        ShowRemainShipsJFrame showRemainShipsJFrame = new ShowRemainShipsJFrame();
 //        showRemainShipsJFrame.setVisible(true);
@@ -66,13 +64,13 @@ public class MasterManager {
     
     private  List < UserApiEntity > addFakeUserDBG(){
         List < UserApiEntity > userApiEntitys = new ArrayList<>();
-//        UserApiEntity userApiEntity = new UserApiEntity("111", "222", "lele");
-//        userApiEntitys.add(userApiEntity);
+        UserApiEntity userApiEntity = new UserApiEntity("111", "222", "lele", true);
+        userApiEntitys.add(userApiEntity);
         
-        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca");
+        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca", true);
         userApiEntitys.add(userApiEntity02);
         
-        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo");
+        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", false);
         userApiEntitys.add(userApiEntity03);
         
         return userApiEntitys;

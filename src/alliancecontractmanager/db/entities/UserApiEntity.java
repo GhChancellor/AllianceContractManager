@@ -44,7 +44,24 @@ public class UserApiEntity implements Serializable {
     private String urlVerificationCodeString = "&vCode=";
     @Column(unique = true)
     private String urlVerificationCodeValue = null;
+    private boolean userEnable;
 
+    /**
+     * Get if is User Enable
+     * @return boolean
+     */
+    public boolean isUserEnable() {
+        return userEnable;
+    }
+
+    /**
+     * Set User Enable
+     * @param userEnable 
+     */
+    public void setUserEnable(boolean userEnable) {
+        this.userEnable = userEnable;
+    }
+    
     /**
      * Get all contract Entitys
      * @return List < ContractEntity >
@@ -96,10 +113,11 @@ public class UserApiEntity implements Serializable {
      * @param urlVerificationCode
      * @param nameCharacter 
      */
-    public UserApiEntity( String urlKeyIdValue, String urlVerificationCode, String nameCharacter ) {
+    public UserApiEntity( String urlKeyIdValue, String urlVerificationCode, String nameCharacter, boolean userEnable) {
         this.urlKeyIdValue = urlKeyIdValue;
         this.urlVerificationCodeValue = urlVerificationCode;    
         this.nameCharacter = nameCharacter;
+        this.userEnable = userEnable;
     }    
     
     /**

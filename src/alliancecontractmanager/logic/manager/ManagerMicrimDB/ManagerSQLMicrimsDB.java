@@ -13,6 +13,7 @@ import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.enumname.StatusEnum;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -52,15 +53,26 @@ public class ManagerSQLMicrimsDB {
     }
 
     /**
+     * DBG NON MI PIACE
+     * Lo voglio riportare direttamente in oggetto tralasciando doppioni
      * Get all contracts avoid these with the same name
      * @return List < ContractEntity >
      */
     public List < ContractEntity > getContractsTitleAvoidDuplicate(){
         try {
-            TypedQuery < ContractEntity > getContractsTitleAvoidDuplicateTQ = 
-             entityManagerEM.createNamedQuery("getContractsTitleAvoidDuplicate", ContractEntity.class);
             
-            return getContractsTitleAvoidDuplicateTQ.getResultList();
+            Query query =  entityManagerEM.createNamedQuery("getContractsTitleAvoidDuplicate");
+            List < String > titles = query.getResultList();
+
+            List < ContractEntity > contractEntitys = new ArrayList<>();
+            
+            for (String title : titles) {
+                ContractEntity contractEntity = new ContractEntity();
+                contractEntity.setTitle(title);
+                contractEntitys.add(contractEntity);
+            }
+
+            return contractEntitys;
         } catch (Exception e) {
             System.out.println("ManagerMicrimDB getContractsTitleAvoidDuplicate");
             e.printStackTrace();
@@ -178,7 +190,8 @@ public class ManagerSQLMicrimsDB {
      */
     public void deleteContract(ContractEntity contractEntity){       
         try {
-            contractEntityJpaController.destroy(contractEntity.getId());
+            Long value = contractEntity.getId();
+            contractEntityJpaController.destroy(value);
         } catch (NonexistentEntityException e) {
             e.printStackTrace();
         }
@@ -422,7 +435,7 @@ public class ManagerSQLMicrimsDB {
             e.printStackTrace();
             return null;
         }        
-    }      
+    }         
     
     // da sostituire con la versione con user
     

@@ -21,7 +21,8 @@ import javax.persistence.OneToMany;
  * @author lele
  */
 @Entity
-@NamedQuery(name = "getUserApiIndex", query = "SELECT c FROM UserApiIndexEntity C" )
+ @NamedQuery(name = "getUserApiIndex", query = "SELECT a FROM UserApiIndexEntity a" )
+// @NamedQuery(name = "getUserApiIndex", query = "SELECT a FROM UserApiIndexEntity a, UserApiEntity b WHERE b.userEnable = TRUE " )
 public class UserApiIndexEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
