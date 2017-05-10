@@ -7,15 +7,15 @@ package alliancecontractmanager.logic.manager.ManagerMicrimDB;
 
 import alliancecontractmanager.db.controllers.ContractEntityJpaController;
 import alliancecontractmanager.db.controllers.UserApiEntityJpaController;
-import alliancecontractmanager.db.controllers.UserApiIndexEntityJpaController;
 import alliancecontractmanager.db.controllers.exceptions.NonexistentEntityException;
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.enumname.StatusEnum;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -188,12 +188,30 @@ public class ManagerSQLMicrimsDB {
      * @param value
      * @param id 
      */
-    public void deleteContract(ContractEntity contractEntity){       
+    public void deleteContract(UserApiEntity apiEntity, ContractEntity contractEntity){  
+        unlinkContract(apiEntity, contractEntity);
+        
         try {
             Long value = contractEntity.getId();
             contractEntityJpaController.destroy(value);
         } catch (NonexistentEntityException e) {
             e.printStackTrace();
+        }       
+    }
+    
+    /**
+     * Unlink contract from user
+     * @param apiEntity
+     * @param contractEntity 
+     */
+    private void unlinkContract( UserApiEntity apiEntity, ContractEntity contractEntity ){
+        boolean removed = apiEntity.getAllContractEntitys().remove(contractEntity);
+        if ( removed ){
+            try {
+                userKeyIDJpaController.edit(apiEntity);
+            } catch (Exception ex) {
+                Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

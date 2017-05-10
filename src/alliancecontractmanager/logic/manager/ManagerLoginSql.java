@@ -5,7 +5,7 @@
  */
 package alliancecontractmanager.logic.manager;
 
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
+import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLUser;
 import java.util.List;
 
@@ -33,26 +33,27 @@ public class ManagerLoginSql {
      * Get User Api Index
      * @return List < UserApiIndexEntity >
      */
-    public List < UserApiIndexEntity > getUserApiIndex(){
-        List < UserApiIndexEntity > userApiIndexEntity = 
-         ManagerSQLUser.getInstance().getUserApiIndexEntity();
+    public List < UserApiEntity > getUserApiEntities(){
+        List < UserApiEntity > userApiEntity = 
+         ManagerSQLUser.getInstance().getUserApiEntities();
 
-        return userApiIndexEntity;     
+        return userApiEntity;     
     }
     
     /**
      * add write DB User Api from login
      * @param  
      */
-    public void addUserApiIndex(UserApiIndexEntity userApiIndexEntity){
-        ManagerSQLUser.getInstance().addUserApiIndexEntity(userApiIndexEntity);
+    public void addUserApiIndex(UserApiEntity userApiEntity){
+        ManagerSQLUser.getInstance().addUserApiEntity(userApiEntity);
+
     }
     
     /**
      * Delete from DB User Api
      * @param Integer id 
      */
-    public void deleteUserApiIndex(UserApiIndexEntity userApiIndexEntity){
-        
+    public void deleteUserApi(UserApiEntity userApiEntity){
+        ManagerSQLUser.getInstance().deleteUserApiEntity(userApiEntity);
     }
 }

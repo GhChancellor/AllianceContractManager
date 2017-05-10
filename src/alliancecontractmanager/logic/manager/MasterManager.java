@@ -7,10 +7,8 @@ package alliancecontractmanager.logic.manager;
 
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.gui.frame.ShowContractJFrame;
-import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
-import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLUser;
+import alliancecontractmanager.gui.frame.ShowReportShipJFrame;
 import alliancecontractmanager.logic.xml.ContractXml;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,21 +23,16 @@ public class MasterManager {
     }
     
     public void init(){
-        // Get User Api Index
-        List < UserApiIndexEntity > userApiIndexEntitys =
-         ManagerLoginSql.getInstance().getUserApiIndex();
+        System.out.println("");
+        List < UserApiEntity > userApiEntitys = 
+         ManagerLoginSql.getInstance().getUserApiEntities();
         
-        // create a Fake users
-        if ( userApiIndexEntitys.isEmpty() )
-            initFakeUser02();
-        
-        // Get User Api Index ( all list of users )
-        List < UserApiIndexEntity > userApiIndexEntity = 
-         ManagerSQLUser.getInstance().getUserApiIndexEntity();
+        if (userApiEntitys.isEmpty())
+            initFakeUser();
 
         // Init contract User
         ManagerContractXmlMySql managerContractXmlMySql = 
-         new ManagerContractXmlMySql(userApiIndexEntity); 
+         new ManagerContractXmlMySql(userApiEntitys); 
         
         
 //        List < ContractEntity > contractEntitys = 
@@ -49,9 +42,9 @@ public class MasterManager {
 //            System.out.println(""+contractEntity.getTitle());
 //        }
         
-//        ShowContractJFrame showContractJFrame = new ShowContractJFrame();
-//        showContractJFrame.setVisible(true);
-//        showContractJFrame.setLocationRelativeTo(showContractJFrame);
+        ShowContractJFrame showContractJFrame = new ShowContractJFrame();
+        showContractJFrame.setVisible(true);
+        showContractJFrame.setLocationRelativeTo(showContractJFrame);
 //        
 //        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
 //        showReportShipJFrame.setVisible(true);
@@ -70,7 +63,7 @@ public class MasterManager {
         UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca", true);
         userApiEntitys.add(userApiEntity02);
         
-        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", false);
+        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", true);
         userApiEntitys.add(userApiEntity03);
         
         return userApiEntitys;
@@ -79,54 +72,15 @@ public class MasterManager {
     /** 
      * Create a fake users don't load XML FILE
      */
-    private void initFakeUser02(){
-        if ( ManagerSQLUser.getInstance().getUserApiIndexEntity().isEmpty() ){
- 
-            List < UserApiEntity > userApiEntitys = addFakeUserDBG();
-  
-            for (UserApiEntity userApiEntity : userApiEntitys) {
-                
-                UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();                  
-                userApiIndexEntity.addUserApiIndexEntitys(userApiEntity);
-                ManagerSQLUser.getInstance().addUserApiIndexEntity( userApiIndexEntity );     
-            }
+    private List < UserApiEntity > initFakeUser(){
+        List < UserApiEntity > userApiEntitys = addFakeUserDBG();
+        for (UserApiEntity userApiEntity : userApiEntitys) {
+            ManagerLoginSql.getInstance().addUserApiIndex(userApiEntity);
         }
-        return; 
+        return userApiEntitys;
     }
     
     /**
-     * CON caricamento dati XML
-     * @return 
-     */
-    private List < UserApiIndexEntity > initFakeUser(){
-        if ( ManagerSQLUser.getInstance().getUserApiIndexEntity().isEmpty() ){
- 
-            List < UserApiEntity > userApiEntitys = addFakeUserDBG();
-  
-            for (UserApiEntity userApiEntity : userApiEntitys) {
-                
-                UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();                  
-                
-//                ManagerContractXml.getInstance().loadXMLDBG(userApiEntity);
-//                
-//                List < ContractXml > contractXmls =
-//                 ManagerContractXml.getInstance().getContractXmls();
-//                
-//                for (ContractXml contractXml : contractXmls) {
-//                    ContractEntity contractEntity = writeValueInTheDatabaseFake(contractXml);
-//                    userApiEntity.addContractEntitys( contractEntity );
-//                }
-
-                userApiIndexEntity.addUserApiIndexEntitys(userApiEntity);
-                ManagerSQLUser.getInstance().addUserApiIndexEntity( userApiIndexEntity );     
-            }
-        }
-        
-        List < UserApiIndexEntity > userApiIndexEntity = ManagerSQLUser.getInstance().getUserApiIndexEntity();      
-        return userApiIndexEntity;
-    }
-    
-        /**
      * Write Xml Value In The Data base
      * @param contractXml 
      */
@@ -148,28 +102,6 @@ public class MasterManager {
             e.printStackTrace();
         }          
         return null;
-    }
-
-    /**
-     * mostra gli utenti e i contratti personali
-     */
-    private void displayDBG(){
-        List < UserApiIndexEntity > userApiIndexEntity  = ManagerSQLUser.getInstance().getUserApiIndexEntity();
-        
-        for (UserApiIndexEntity userApiIndexEntity1 : userApiIndexEntity) {
-            List < UserApiEntity > apiEntitys = userApiIndexEntity1.getUserApiIndexEntitys();
-            
-            for (UserApiEntity apiEntity : apiEntitys) {
-                System.out.println(""+ apiEntity.getNameCharacter());
-                
-                List < ContractEntity > contractEntitys = apiEntity.getAllContractEntitys();
-                for (ContractEntity contractEntity : contractEntitys) {
-                    System.out.println(""+ contractEntity.getTitle());
-                }
-                System.out.println("");
-            }
-        }
- 
-    }    
+    } 
     
 }

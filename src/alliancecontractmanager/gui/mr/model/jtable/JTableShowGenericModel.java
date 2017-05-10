@@ -58,6 +58,11 @@ public class JTableShowGenericModel extends DefaultTableModel{
         }
     }        
     
+    public void removeElement ( int index ){
+        this.dataVector.remove(index);
+        fireTableRowsDeleted(index, index);
+    }
+    
     public ContractEntity getObjectValue (Object aValue, int row, int column){
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setContractID(getContract(row).getContractID());

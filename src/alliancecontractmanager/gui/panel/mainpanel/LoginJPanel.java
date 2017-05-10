@@ -6,7 +6,6 @@
 package alliancecontractmanager.gui.panel.mainpanel;
 
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.exception.KeyIdEmptyException;
 import alliancecontractmanager.exception.KeyIdWrongException;
 import alliancecontractmanager.exception.NameCharacterEmptyException;
@@ -47,20 +46,14 @@ public class LoginJPanel extends javax.swing.JPanel {
      * Init list api from db
      */
     public void initJlistApis(){
-//        // DBG         
-        List < UserApiIndexEntity > userApiIndexEntitys =
-         ManagerLoginSql.getInstance().getUserApiIndex();
+        List < UserApiEntity > userApiEntitys = 
+         ManagerLoginSql.getInstance().getUserApiEntities();
         
-        if ( !userApiIndexEntitys.isEmpty() ){
-            for (UserApiIndexEntity userApiIndexEntity : userApiIndexEntitys) {
-                List < UserApiEntity > apiEntitys = 
-                 userApiIndexEntity.getUserApiIndexEntitys();
-                
-                for (UserApiEntity apiEntity : apiEntitys) {
-                    jListUserApiModel1.addElement(apiEntity);
-                }
-            }
+        
+        for (UserApiEntity apiEntity : userApiEntitys) {
+            jListUserApiModel1.addElement(apiEntity);
         }
+
     }    
     
     /**
@@ -115,7 +108,7 @@ public class LoginJPanel extends javax.swing.JPanel {
 
         jLabel3.setText("Name Character");
 
-        jButtonDbg.setText("Debug");
+        jButtonDbg.setText("Disable user");
         jButtonDbg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonDbgActionPerformed(evt);
@@ -149,7 +142,7 @@ public class LoginJPanel extends javax.swing.JPanel {
                                         .addComponent(jTextFieldKeyID, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(jButtonDbg)))))
-                        .addGap(0, 214, Short.MAX_VALUE)))
+                        .addGap(0, 181, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -231,10 +224,7 @@ public class LoginJPanel extends javax.swing.JPanel {
 //            if ( ManagerLogin.getIstance().checkDuplication(login.getUrlKeyIdValue()) == true ){
 //                throw new KeyIdExistsException();
 //            }
-            
-            UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();
-            userApiIndexEntity.addUserApiIndexEntitys(userApiEntity);
-            ManagerLoginSql.getInstance().addUserApiIndex(userApiIndexEntity);
+
             jListUserApiModel1.addElement(userApiEntity);
 
             
@@ -246,13 +236,10 @@ public class LoginJPanel extends javax.swing.JPanel {
 
     
     private void importDGB(java.awt.event.ActionEvent evt){
-        List < UserApiEntity > apiEntitys = addUserDBG();
+        List < UserApiEntity > userApiEntitys = addUserDBG();
         
-        for (UserApiEntity apiEntity : apiEntitys) {
-            UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();
-            userApiIndexEntity.addUserApiIndexEntitys(apiEntity);
-            ManagerLoginSql.getInstance().addUserApiIndex(userApiIndexEntity);
-            jListUserApiModel1.addElement(apiEntity);            
+        for (UserApiEntity userApiEntity : userApiEntitys) {
+            jListUserApiModel1.addElement(userApiEntity); 
         }
     }
     
@@ -272,31 +259,29 @@ public class LoginJPanel extends javax.swing.JPanel {
     
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
                 
-//        if ( ! jListUserApi.isSelectionEmpty() ){
-//            if ( !jListUserApiModel1.isEmpty() ){
-//                Integer yesNoOption = JOptionPane.showConfirmDialog(jButtonDelete, "Do you want delete it?", "Delete", JOptionPane.YES_NO_CANCEL_OPTION);
-//                if (yesNoOption == JOptionPane.YES_OPTION ){
-//                    
-//                    // get single Api User selected
-//                    Login login = (Login) jListUserApi.getSelectedValue();
-//                    
-//                    // Remove a single Api User from DB
-//                    ManagerLoginSql.getInstance().deleteDBUserApi(login);
-//                    
-//                    ManagerLogin.getIstance().removeItem( jListApi.getSelectedIndex()  );
-//                    
-//                    // Remove a single Api User from GUI
-//                    jListApiModel1.remove( jListApi.getSelectedIndex() );                      
-//                    
-//                }
-//            }else{
-//                JOptionPane.showMessageDialog(jButtonDelete, "There are not api", "Listi is emoty", JOptionPane.ERROR_MESSAGE);
-//            }            
-//        }
+        if ( ! jListUserApi.isSelectionEmpty() ){
+            if ( !jListUserApiModel1.isEmpty() ){
+                
+                Integer yesNoOption = JOptionPane.showConfirmDialog(jButtonDelete, "Do you want delete it?", "Delete", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (yesNoOption == JOptionPane.YES_OPTION ){
+                    
+                    // get single Api User selected
+                    UserApiEntity userApiEntity = (UserApiEntity) jListUserApi.getSelectedValue();
+                    
+                    // Remove a single Api User from DB
+                    ManagerLoginSql.getInstance().deleteUserApi(userApiEntity);
+                    
+                    // Remove a single Api User from GUI
+                    jListUserApiModel1.remove( jListUserApi.getSelectedIndex() );                                          
+                }
+            }else{
+                JOptionPane.showMessageDialog(jButtonDelete, "There are not api", "Listi is emoty", JOptionPane.ERROR_MESSAGE);
+            }            
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonDbgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDbgActionPerformed
-        importDGB(evt);
+       
     }//GEN-LAST:event_jButtonDbgActionPerformed
  
 

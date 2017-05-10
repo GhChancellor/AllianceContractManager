@@ -7,7 +7,6 @@ package alliancecontractmanager.gui.mr.model.JComboBox;
 
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.enumname.StatusEnum;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
@@ -32,11 +31,7 @@ public class JComboBoxNameShip02Model extends JComboBoxGenericModel {
     }
 
     public void init() {
-
-        UserApiIndexEntity userApiIndexEntity =
-         ManagerLoginSql.getInstance().getUserApiIndex().get(0);
-
-        UserApiEntity userApiEntity = userApiIndexEntity.getUserApiIndexEntitys().get(0);
+        UserApiEntity userApiEntity = ManagerLoginSql.getInstance().getUserApiEntities().get(0);
 
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
@@ -46,8 +41,7 @@ public class JComboBoxNameShip02Model extends JComboBoxGenericModel {
 
          if ( contractEntitys != null )   {
             addElements(contractEntitys,1);
-         }
-        
+         }                
     }
 
 }

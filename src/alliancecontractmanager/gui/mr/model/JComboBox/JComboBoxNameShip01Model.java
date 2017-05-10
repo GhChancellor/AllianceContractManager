@@ -7,7 +7,6 @@ package alliancecontractmanager.gui.mr.model.JComboBox;
 
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import java.beans.Beans;
 import java.util.HashMap;

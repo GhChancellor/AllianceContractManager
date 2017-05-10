@@ -84,7 +84,7 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="214" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="181" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -183,7 +183,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonDbg">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Debug"/>
+            <Property name="text" type="java.lang.String" value="Disable user"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDbgActionPerformed"/>

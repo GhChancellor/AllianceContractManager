@@ -6,7 +6,6 @@
 package alliancecontractmanager.gui.mr.model.JComboBox;
 
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import java.beans.Beans;
 import java.util.ArrayList;
@@ -31,19 +30,15 @@ public class JComboBoxUserModel extends DefaultComboBoxModel<UserApiEntity>{
     private void initJComboBoxUser(){
 
         if ( Beans.isDesignTime() ){
-           List < UserApiIndexEntity >  userApiIndexEntitys = new ArrayList<>();
+           // List < UserApiIndexEntity >  userApiIndexEntitys = new ArrayList<>();
+           List < UserApiEntity > userApiEntitys = new ArrayList<>();
+           
         }else{
-            List < UserApiIndexEntity >  userApiIndexEntitys = 
-             ManagerLoginSql.getInstance().getUserApiIndex();
-
-            for (UserApiIndexEntity userApiIndexEntity : userApiIndexEntitys) {
-                List < UserApiEntity > userApiEntitys = 
-                 userApiIndexEntity.getUserApiIndexEntitys();
-
-                for (UserApiEntity userApiEntity : userApiEntitys) {
-                    this.addElement(userApiEntity);
-                }
-            }            
+            List < UserApiEntity > userApiEntitys = ManagerLoginSql.getInstance().getUserApiEntities();
+            
+            for (UserApiEntity userApiEntity : userApiEntitys) {
+                this.addElement(userApiEntity);
+            }        
         }
         
     }

@@ -6,10 +6,12 @@
 package alliancecontractmanager.logic.manager.ManagerMicrimDB;
 
 import alliancecontractmanager.db.controllers.UserApiEntityJpaController;
-import alliancecontractmanager.db.controllers.UserApiIndexEntityJpaController;
+import alliancecontractmanager.db.controllers.exceptions.NonexistentEntityException;
+import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -41,39 +43,38 @@ public class ManagerSQLUser {
     }
 
     /**
-     * Get User Api Index ( all list of users )
-     * @return List < UserApiIndexEntity >
+     * get User Api
+     * @return List < UserApiEntity > UserApiEntity
      */
-    public List < UserApiIndexEntity > getUserApiIndexEntity(){
+    public List < UserApiEntity > getUserApiEntities(){
         try {
-            EntityManager getUserApiIndexEntityEM = 
-             Persistence.createEntityManagerFactory("AllianceContractManagerPU").createEntityManager();
+            EntityManager getUserApiEntityEM = entityManagerEM;
 
-            TypedQuery < UserApiIndexEntity > getUserApiIndexEntityTQ =
-             getUserApiIndexEntityEM.createNamedQuery("getUserApiIndex", UserApiIndexEntity.class);
+            TypedQuery < UserApiEntity > getUserApiEntityTQ =
+             getUserApiEntityEM.createNamedQuery("getUserApiEntity", UserApiEntity.class);
+            
+            getUserApiEntityTQ.setParameter("userEnable", true);
 
-            return getUserApiIndexEntityTQ.getResultList();            
+            return getUserApiEntityTQ.getResultList();            
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return null;            
         }
     }
     
     /**
      * Add User Api Inde xEntity
-     * @param userApiIndexEntity 
+     * @param userApiEntity 
      */
-    public void addUserApiIndexEntity(UserApiIndexEntity userApiIndexEntity ){
+    public void addUserApiEntity(UserApiEntity userApiEntity ){
         try {
-            UserApiIndexEntityJpaController userApiIndexEntityJpaController = new 
-             UserApiIndexEntityJpaController(Persistence.createEntityManagerFactory("AllianceContractManagerPU"));
-
-            userApiIndexEntityJpaController.create(userApiIndexEntity);            
+            UserApiEntityJpaController userApiEntityJpaController = new UserApiEntityJpaController(entityManagerFactoryEMF);            
+            userApiEntityJpaController.create(userApiEntity);        
         } catch (Exception e) {
             e.printStackTrace();
         } 
-    }
-
+    }    
+    
     /**
      * Update User Api Index 
      * @param UserApiIndexEntity userApiIndexEntity 
@@ -87,5 +88,39 @@ public class ManagerSQLUser {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }    
+    }
+
+    /**
+     * Delete User Api Entity
+     * @param UserApiEntity userApiEntity 
+     */
+    public void deleteUserApiEntity(UserApiEntity userApiEntity){
+        UserApiEntityJpaController userApiEntityJpaController = 
+         new UserApiEntityJpaController(entityManagerFactoryEMF);
+        
+        unlinkContract(userApiEntity);
+
+        try {
+            userApiEntityJpaController.destroy(userApiEntity.getId());
+        } catch (NonexistentEntityException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(ManagerSQLUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+   
+    /**
+     * Unlink contract from user
+     * @param userApiEntity 
+     */
+    private void unlinkContract(UserApiEntity userApiEntity){
+       if ( !userApiEntity.getAllContractEntitys().isEmpty() ){
+           try {
+               userApiEntity.getAllContractEntitys().clear();
+               
+               userKeyIDJpaController.edit(userApiEntity);
+           } catch (Exception ex) {
+               Logger.getLogger(ManagerSQLUser.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
+    }
 }

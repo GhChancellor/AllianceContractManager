@@ -245,11 +245,14 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
      * @param evt 
      */
     private void jButtonDeleteExpiredMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonDeleteExpiredMouseClicked
+        UserApiEntity apiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
+        
         int row = JTableShowContract.getSelectedRow();
         
         ContractEntity contractEntity = (ContractEntity) jTableShowContractModel1.getContract(row);
-        ManagerSQLMicrimsDB.getInstance().deleteContract(contractEntity);
-        // System.out.println("");
+        ManagerSQLMicrimsDB.getInstance().deleteContract(apiEntity, contractEntity);
+
+        jTableShowContractModel1.removeElement(row);
     }//GEN-LAST:event_jButtonDeleteExpiredMouseClicked
 
     private void jComboBoxUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUserActionPerformed

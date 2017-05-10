@@ -8,7 +8,6 @@ package alliancecontractmanager.logic.manager;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
-import alliancecontractmanager.db.entities.UserApiIndexEntity;
 import alliancecontractmanager.logic.enumname.StatusEnum;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLUser;
 import alliancecontractmanager.logic.xml.ContractXml;
@@ -26,48 +25,40 @@ public class ManagerContractXmlMySql {
      * Init contract User
      * @param List < UserApiIndexEntity > userApiIndexEntity 
      */
-    public ManagerContractXmlMySql(List < UserApiIndexEntity > userApiIndexEntitys) {
-        initDBContract(userApiIndexEntitys);
+    public ManagerContractXmlMySql(List < UserApiEntity > userApiEntitys) {
+        initDBContract(userApiEntitys);
     }
     
-    public void initDBContract(List < UserApiIndexEntity > userApiIndexEntitys){
+    public void initDBContract(List < UserApiEntity > userApiEntitys){
         boolean boolean001 = false;
+
+        if (userApiEntitys.isEmpty())
+            return;
         
-        List < UserApiEntity > userApiEntitys = null;
-        
-        for (UserApiIndexEntity userApiIndexEntity : userApiIndexEntitys) {
-            
-            userApiEntitys = userApiIndexEntity.getUserApiIndexEntitys();
+        for (UserApiEntity userApiEntity : userApiEntitys) {
 
             // check that DB is not empty
             if ( ManagerSQLMicrimsDB.getInstance().getContracts().isEmpty() ){
                 boolean001 = true;
             }
-            
-            // check if are there users
-            if ( !userApiEntitys.isEmpty()  ){
-                
-                for (UserApiEntity userApiEntity : userApiEntitys) {
-                    // Load XML contract by User
-                    ManagerContractXml.getInstance().loadXMLDBG(userApiEntity);
-                    
-                    // Get contract XML
-                    List < ContractXml > contractXmls =
-                     ManagerContractXml.getInstance().getContractXmls(); 
-                    
-                    // check that are there contracts
-                    if ( !contractXmls.isEmpty() ){
-                        if ( boolean001 ){
-                            checkAndWrite(userApiEntity, contractXmls);                    
-                        }else{
-                            contractExpired(userApiEntity);
-                            updateContract(userApiEntity);                    
-                        }                        
-                    }
-                }                    
-            }
-       }         
-    }
+            // Load XML contract by User
+            ManagerContractXml.getInstance().loadXMLDBG(userApiEntity);
+
+            // Get contract XML
+            List < ContractXml > contractXmls =
+             ManagerContractXml.getInstance().getContractXmls(); 
+
+            // check that are there contracts
+            if ( !contractXmls.isEmpty() ){
+                if ( boolean001 ){
+                    checkAndWrite(userApiEntity, contractXmls);                    
+                }else{
+                    contractExpired(userApiEntity);
+                    updateContract(userApiEntity);                    
+                }                        
+            }      
+        }       
+    }    
 
     /**
      * If contract is null don't update.
@@ -176,7 +167,7 @@ public class ManagerContractXmlMySql {
      */
     private Boolean isStatusDelete(ContractEntity contractEntity){
         if ( contractEntity.getStatusContract().equals(StatusEnum.DELETED.getStatus())){
-           ManagerSQLMicrimsDB.getInstance().deleteContract(contractEntity);
+//           ManagerSQLMicrimsDB.getInstance().deleteContract(contractEntity);
            return true;
         }
         return false;
@@ -236,41 +227,19 @@ public class ManagerContractXmlMySql {
         userApiEntity.addContractEntitys(contractEntity);
         return userApiEntity;
     }
-    
-    /**
-     * Write contract into DB
-     * @param UserApiIndexEntity userApiIndexEntity 
-     */
-    private void writeValueInTheDatabaseDBGLUCA(UserApiEntity userApiEntity){
         
-        UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();        
-        
-        if ( ManagerSQLUser.getInstance().getUserApiIndexEntity().isEmpty() ){
-            ManagerSQLMicrimsDB.getInstance().addContract(userApiEntity);
-            userApiIndexEntity.addUserApiIndexEntitys(userApiEntity);
-            
-            ManagerSQLUser.getInstance().addUserApiIndexEntity(userApiIndexEntity);    
-            
-        }else{
-            // ManagerSQLMicrimsDB.getInstance().updateUserApiIndexEntityDBGLUCA(userApiIndexEntity);
-            ManagerSQLUser.getInstance().updateUserApiEntity(userApiEntity);
-        }
-    }
-    
     /**
      * Write contract into DB
      * @param UserApiIndexEntity userApiIndexEntity 
      */
     private void writeValueInTheDatabase(UserApiEntity userApiEntity){
-        writeValueInTheDatabaseDBGLUCA(userApiEntity);
-//        UserApiIndexEntity userApiIndexEntity = new UserApiIndexEntity();        
-//        
-//        if ( ManagerSQLMicrimsDB.getInstance().getUserApiIndexEntity().isEmpty() ){
-//            userApiIndexEntity.addUserApiIndexEntitys(userApiEntity);
-//            ManagerSQLMicrimsDB.getInstance().addUserApiIndexEntity(userApiIndexEntity);            
-//        }else{
-//            ManagerSQLMicrimsDB.getInstance().updateUserApiEntity(userApiEntity);
-//        }
+        if ( ManagerSQLUser.getInstance().getUserApiEntities() .isEmpty() ){
+            ManagerSQLMicrimsDB.getInstance().addContract(userApiEntity);
+            ManagerSQLUser.getInstance().addUserApiEntity(userApiEntity);
+        }else{
+            ManagerSQLUser.getInstance().updateUserApiEntity(userApiEntity);
+        }
+
     }     
     
     /**
