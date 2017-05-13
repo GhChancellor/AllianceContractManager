@@ -9,6 +9,7 @@ import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.gui.logicgui.event.Listener;
 import alliancecontractmanager.logic.enumname.StatusEnum;
+import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import java.beans.Beans;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
 //                return;
 //            }
 
-            initShowContractJPanel();
+//            initShowContractJPanel();
             initGuiShowContractJPanel();
         }
     }
@@ -79,6 +80,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
         jComboBoxStatusContract01 = new javax.swing.JComboBox<>();
         jButtonDeleteExpired = new javax.swing.JButton();
         jComboBoxUser = new javax.swing.JComboBox<>();
+        jButtonAggiornamento = new javax.swing.JButton();
 
         jComboBoxNameShipRenderer011.setText("jComboBoxNameShipRenderer011");
 
@@ -129,6 +131,13 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
             }
         });
 
+        jButtonAggiornamento.setText("DBG aggiornamento");
+        jButtonAggiornamento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonAggiornamentoMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -143,6 +152,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
                 .addComponent(jComboBoxStatusContract01, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButtonDeleteExpired, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonAggiornamento)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -153,7 +164,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
                     .addComponent(jComboBoxNameShip01, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxStatusContract01, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonDeleteExpired)
-                    .addComponent(jComboBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonAggiornamento))
                 .addGap(14, 14, 14)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
         );
@@ -245,6 +257,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
      * @param evt 
      */
     private void jButtonDeleteExpiredMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonDeleteExpiredMouseClicked
+        
         UserApiEntity apiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
         
         int row = JTableShowContract.getSelectedRow();
@@ -256,6 +269,10 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
     }//GEN-LAST:event_jButtonDeleteExpiredMouseClicked
 
     private void jComboBoxUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUserActionPerformed
+
+        if ( jComboBoxUser.getSelectedIndex() == -1)
+            return;
+        
         UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
         
        jComboBoxNameShip01Model1.removeAllElements();
@@ -286,9 +303,54 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
              
     }//GEN-LAST:event_jComboBoxUserActionPerformed
 
+    private void jButtonAggiornamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAggiornamentoMouseClicked
+        System.out.println("");
+        
+        List < UserApiEntity > userApiEntitys = 
+         ManagerLoginSql.getInstance().getUserApiEntities();
+
+        jComboBoxUserModel1.removeAllElements();
+
+        
+        // DBG questa parte è copiata da jComboBoxUserActionPerformed correggere
+        
+        for (UserApiEntity userApiEntity : userApiEntitys) {
+            jComboBoxUserModel1.addElement(userApiEntity);
+        }
+
+        UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getItemAt(0);
+        
+       jComboBoxNameShip01Model1.removeAllElements();
+       jTableShowContractModel1.clear();
+       
+       int selectedUserIndex = jComboBoxUser.getSelectedIndex();
+       
+       ContractEntity contractEntity = new ContractEntity();
+               
+        if ( jComboBoxNameShip01.getSelectedIndex() == -1 ) {
+            String titleContract = userApiEntity.getAllContractEntitys().get(0).getTitle();
+            contractEntity.setTitle(titleContract);
+        }else{
+            contractEntity.setTitle(jComboBoxNameShip01.getSelectedItem().toString() );
+        }               
+
+        List < ContractEntity > contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContracts(userApiEntity);
+        jComboBoxNameShip01Model1.addElements(contractEntitys,1);
+        
+        if (jComboBoxStatusContract01.getSelectedIndex() == 0 ){
+            contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitle(userApiEntity, contractEntity);
+        }else{
+            contractEntity.setStatusContract(jComboBoxStatusContract01.getSelectedItem().toString());
+            contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);            
+        }
+
+        writeValueToTable(contractEntitys);  
+    }//GEN-LAST:event_jButtonAggiornamentoMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTableShowContract;
+    private javax.swing.JButton jButtonAggiornamento;
     private javax.swing.JButton jButtonDeleteExpired;
     private javax.swing.JComboBox<ContractEntity> jComboBoxNameShip01;
     private alliancecontractmanager.gui.mr.model.JComboBox.JComboBoxNameShip01Model jComboBoxNameShip01Model1;

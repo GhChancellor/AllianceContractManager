@@ -69,6 +69,8 @@
                   <Component id="jComboBoxStatusContract01" min="-2" pref="104" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jButtonDeleteExpired" min="-2" pref="82" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jButtonAggiornamento" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -82,6 +84,7 @@
                       <Component id="jComboBoxStatusContract01" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jButtonDeleteExpired" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jComboBoxUser" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonAggiornamento" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" pref="336" max="32767" attributes="0"/>
@@ -200,6 +203,14 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;UserApiEntity&gt;"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButtonAggiornamento">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="DBG aggiornamento"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonAggiornamentoMouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

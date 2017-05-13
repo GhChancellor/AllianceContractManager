@@ -43,7 +43,7 @@ public class ManagerSQLUser {
     }
 
     /**
-     * get User Api
+     * Get User Api Entities
      * @return List < UserApiEntity > UserApiEntity
      */
     public List < UserApiEntity > getUserApiEntities(){
@@ -51,7 +51,7 @@ public class ManagerSQLUser {
             EntityManager getUserApiEntityEM = entityManagerEM;
 
             TypedQuery < UserApiEntity > getUserApiEntityTQ =
-             getUserApiEntityEM.createNamedQuery("getUserApiEntity", UserApiEntity.class);
+             getUserApiEntityEM.createNamedQuery("getUserApiEntities", UserApiEntity.class);
             
             getUserApiEntityTQ.setParameter("userEnable", true);
 
@@ -123,4 +123,32 @@ public class ManagerSQLUser {
            }
        }
     }
+    
+    /**
+     * UNUSED
+     * Get User Api Entity
+     * @return UserApiEntity UserApiEntity
+     */
+    public UserApiEntity getUserApiEntity(){
+        try {
+            EntityManager getUserApiEntityEM = entityManagerEM;
+
+            TypedQuery < UserApiEntity > getUserApiEntityTQ =
+             getUserApiEntityEM.createNamedQuery("getUserApiEntities", UserApiEntity.class);
+            
+            getUserApiEntityTQ.setParameter("userEnable", true);
+
+            List < UserApiEntity > userApiEntitys = getUserApiEntityTQ.getResultList();
+
+            if ( userApiEntitys.isEmpty()){
+                return null;
+            }else{
+                userApiEntitys.get(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;            
+        }
+        return null;
+    }    
 }

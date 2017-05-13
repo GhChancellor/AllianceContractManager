@@ -27,8 +27,12 @@ public class MasterManager {
         List < UserApiEntity > userApiEntitys = 
          ManagerLoginSql.getInstance().getUserApiEntities();
         
-        if (userApiEntitys.isEmpty())
+        // create the fake users
+        if (userApiEntitys.isEmpty()){
             initFakeUser();
+            userApiEntitys = ManagerLoginSql.getInstance().getUserApiEntities();
+        }
+            
 
         // Init contract User
         ManagerContractXmlMySql managerContractXmlMySql = 

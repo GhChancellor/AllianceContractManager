@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 
 
 /**
- *
+ * Se utente disabilitato in fase di avvio non lo trova e non lo aggiunge nella jlist
  * @author lele
  */
 public class LoginJPanel extends javax.swing.JPanel {
@@ -281,7 +281,24 @@ public class LoginJPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonDbgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDbgActionPerformed
-       
+     
+
+       if ( ! jListUserApi.isSelectionEmpty() || !jListUserApiModel1.isEmpty() ){
+            Integer yesNoOption = JOptionPane.showConfirmDialog(jButtonDelete, "Do you want disable/enable it?", "Disable/Enable", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (yesNoOption == JOptionPane.YES_OPTION ){
+                // get single Api User selected
+                UserApiEntity userApiEntity = (UserApiEntity) jListUserApi.getSelectedValue();
+                
+                // disable or enable user and his contract
+                if ( userApiEntity.isUserEnable() == true){
+                    userApiEntity.setUserEnable(false);
+                }else{
+                    userApiEntity.setUserEnable(true);
+                }
+                
+                ManagerLoginSql.getInstance().updateUserApiEntity(userApiEntity);
+            }
+       }
     }//GEN-LAST:event_jButtonDbgActionPerformed
  
 

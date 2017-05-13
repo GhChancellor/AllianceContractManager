@@ -34,10 +34,10 @@ public class ManagerLoginSql {
      * @return List < UserApiIndexEntity >
      */
     public List < UserApiEntity > getUserApiEntities(){
-        List < UserApiEntity > userApiEntity = 
+        List < UserApiEntity > userApiEntities = 
          ManagerSQLUser.getInstance().getUserApiEntities();
 
-        return userApiEntity;     
+        return userApiEntities;     
     }
     
     /**
@@ -46,7 +46,6 @@ public class ManagerLoginSql {
      */
     public void addUserApiIndex(UserApiEntity userApiEntity){
         ManagerSQLUser.getInstance().addUserApiEntity(userApiEntity);
-
     }
     
     /**
@@ -55,5 +54,13 @@ public class ManagerLoginSql {
      */
     public void deleteUserApi(UserApiEntity userApiEntity){
         ManagerSQLUser.getInstance().deleteUserApiEntity(userApiEntity);
+    }
+    
+    /**
+     * Update value of User Api Entity
+     * @param userApiEntity 
+     */
+    public void updateUserApiEntity(UserApiEntity userApiEntity){
+        ManagerSQLUser.getInstance().updateUserApiEntity(userApiEntity);
     }
 }
