@@ -30,7 +30,7 @@ public class MasterManager {
         // create the fake users
         if (userApiEntitys.isEmpty()){
             initFakeUser();
-            userApiEntitys = ManagerLoginSql.getInstance().getUserApiEntities();
+            userApiEntitys = ManagerLoginSql.getInstance().getAllUserApiEntities();
         }
             
 
@@ -53,7 +53,7 @@ public class MasterManager {
 //        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
 //        showReportShipJFrame.setVisible(true);
 //        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
-        
+//        
 //        ShowRemainShipsJFrame showRemainShipsJFrame = new ShowRemainShipsJFrame();
 //        showRemainShipsJFrame.setVisible(true);
 //        showRemainShipsJFrame.setLocationRelativeTo(showRemainShipsJFrame);     

@@ -6,6 +6,7 @@
 package alliancecontractmanager.gui.mr.model.jtable;
 
 import alliancecontractmanager.db.entities.ContractEntity;
+import alliancecontractmanager.logic.enumname.StatusEnum;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import javax.swing.table.DefaultTableModel;
 
@@ -64,12 +65,15 @@ public class JTableShowGenericModel extends DefaultTableModel{
     }
     
     public ContractEntity getObjectValue (Object aValue, int row, int column){
+ 
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setContractID(getContract(row).getContractID());
         
         // get Contract Eve Id ( from Eve Server )      
         contractEntity = ManagerSQLMicrimsDB.getInstance().getContractEveId(contractEntity);
+        
         contractEntity.setPriceBuy( aValue.toString() );
+
         return contractEntity;
     }
 }

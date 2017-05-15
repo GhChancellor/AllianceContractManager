@@ -43,7 +43,7 @@ public class ManagerSQLUser {
     }
 
     /**
-     * Get User Api Entities
+     * Get User Api Entities with parameters userEnable
      * @return List < UserApiEntity > UserApiEntity
      */
     public List < UserApiEntity > getUserApiEntities(){
@@ -54,6 +54,24 @@ public class ManagerSQLUser {
              getUserApiEntityEM.createNamedQuery("getUserApiEntities", UserApiEntity.class);
             
             getUserApiEntityTQ.setParameter("userEnable", true);
+
+            return getUserApiEntityTQ.getResultList();            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;            
+        }
+    }
+    
+    /**
+     * Get User Api Entities without parameters userEnable
+     * @return List < UserApiEntity > UserApiEntity
+     */
+    public List < UserApiEntity > getAllUserApiEntities(){
+        try {
+            EntityManager getUserApiEntityEM = entityManagerEM;
+
+            TypedQuery < UserApiEntity > getUserApiEntityTQ =
+             getUserApiEntityEM.createNamedQuery("getUserApiEntities", UserApiEntity.class);
 
             return getUserApiEntityTQ.getResultList();            
         } catch (Exception e) {

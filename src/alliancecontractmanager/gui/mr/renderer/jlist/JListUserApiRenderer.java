@@ -6,6 +6,7 @@
 package alliancecontractmanager.gui.mr.renderer.jlist;
 
 import alliancecontractmanager.db.entities.UserApiEntity;
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -23,7 +24,14 @@ public class JListUserApiRenderer extends DefaultListCellRenderer{
         
         if ( c != null && value instanceof UserApiEntity){
             ((JLabel)c).setText( ((UserApiEntity)value).getShortReport() );
+            if ( ((UserApiEntity)value).isUserEnable() == false ){
+                ((JLabel)c).setForeground(Color.GRAY);
+            }else{
+                ((JLabel)c).setForeground(Color.BLACK);
+            }
         }
+        
+        
         return c;
     }
     

@@ -7,7 +7,9 @@ package alliancecontractmanager.gui.mr.model.jtable;
 
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.logic.enumname.NameEnum;
+import alliancecontractmanager.logic.enumname.StatusEnum;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -31,9 +33,17 @@ public class JTableShowContractModel extends JTableShowGenericModel{
      */
     @Override
     public boolean isCellEditable(int row, int column) {
-        if (column != 4){
+
+        if (column != 4 || getValueAt(row, 0).equals("") ){
             return false;
         }
+
+        String string = getValueAt(row, column).toString();
+       
+        DecimalFormat dec = new DecimalFormat(string);     
+        dec.setGroupingUsed(false);
+        
+        System.out.println(""+dec);
         return true;
     }
         
@@ -68,11 +78,12 @@ public class JTableShowContractModel extends JTableShowGenericModel{
     @Override
     public void setValueAt(Object aValue, int row, int column){
         // NO lui non sa l'id contract!!!!! Glielo dici tu ShowContractJPanel nel metodo writeValueToTable
-
-        ContractEntity contractEntity = getObjectValue(aValue, row, column);
+        
+        ContractEntity contractEntity = getObjectValue(aValue, row, column);       
         contractEntity.setTempQualcosaDBG(1);
         
         // update sell price
-        ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);        
+        ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);         
+
     }    
 }

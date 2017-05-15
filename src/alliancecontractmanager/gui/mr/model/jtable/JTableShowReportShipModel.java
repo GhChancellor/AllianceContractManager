@@ -35,7 +35,8 @@ public class JTableShowReportShipModel extends JTableShowGenericModel{
             case 2:                 
                  return getContract(row).getPriceBuy();
             case 3: 
-                // DBG
+                // DBG perché la cella si aggiorna lo stesso?
+                
 //                return ""+new DecimalFormat("##.#").format
 //                 (getContract(row).getProfitPercent())+"%";
 //                return getContract(row).getProfitPercent().toString();

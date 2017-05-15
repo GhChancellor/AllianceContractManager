@@ -39,6 +39,18 @@ public class ManagerLoginSql {
 
         return userApiEntities;     
     }
+    /**
+     * Get User Api Entities without parameters userEnable
+     * @return List < UserApiEntity > 
+     */
+    public List < UserApiEntity > getAllUserApiEntities(){
+        List < UserApiEntity > userApiEntities = 
+         ManagerSQLUser.getInstance().getUserApiEntities();
+
+        return userApiEntities;     
+    }
+    
+    
     
     /**
      * add write DB User Api from login
