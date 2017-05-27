@@ -64,6 +64,10 @@ import javax.persistence.Temporal;
 @NamedQuery(name = "getContractDateExpired", 
  query = "SELECT c FROM ContractEntity c WHERE c.statusContract='expired' AND c.dateExpired = :dateExpired"),
 
+// get All contract with same dateIssued
+@NamedQuery(name = "getContractDateIssued", 
+ query = "SELECT c FROM ContractEntity c WHERE c.dateIssued = :dateIssued"),
+
 // get all contracts ( to all users ) with parameter Status
 @NamedQuery(name = "getContractsByStatus", 
  query = "SELECT c FROM ContractEntity c WHERE c.statusContract= :statusContract"),
@@ -156,6 +160,7 @@ public class ContractEntity implements Serializable {
 
     
     /**
+     * Unused
      * Get Date Expired with Formatted
      * @return Date
      */
@@ -281,7 +286,7 @@ public class ContractEntity implements Serializable {
 
     /**
      * Get Date without formmatting
- see getDateCompletedFormatted
+     * see getDateCompletedFormatted
      * @return Date
      */
     public Date getDateCompletedUnformatted() {

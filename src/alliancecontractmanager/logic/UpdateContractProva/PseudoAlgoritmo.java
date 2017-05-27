@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package alliancecontractmanager.logic;
+package alliancecontractmanager.logic.UpdateContractProva;
 
 import alliancecontractmanager.db.controllers.ContractEntityJpaController;
 import alliancecontractmanager.db.entities.ContractEntity;
@@ -40,13 +40,19 @@ public class PseudoAlgoritmo {
 
     public void update() {
         List<ContractXml> loadContractFromXML = this.loadContractFromXML(); //2.0
+        
         this.checkContracts(loadContractFromXML); //2.1
+        
         Date nowMinus15 = new Date(new Date().getTime() - (1000l * 60l * 15l));
+        
         List<ContractXml> allContractsAfter = this.getAllContractsIssued(loadContractFromXML, nowMinus15); //2.2) 
+        
         for (ContractXml contractXml : allContractsAfter) { 
             this.setContractAsNEW(contractXml);            // 2.2.1) 
         }
+        
         List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15); //7 2.3)
+        
         for (ContractXml cCompleted : allContractsCompleted) {
             this.fixClosedContract(cCompleted);
         }
@@ -89,9 +95,13 @@ public class PseudoAlgoritmo {
      * @return
      */
     public List<ContractXml> getAllContractsIssued(List<ContractXml> allContracts, Date date) {
+        
         List<ContractXml> result = new ArrayList<>();
+        
         for (ContractXml ccc : allContracts) {
+        
             Date dateIssued = parseStringToDate(ccc.getDateIssued());
+            
             if (dateIssued.after(date)) {
                 result.add(ccc);
             }
@@ -133,14 +143,17 @@ public class PseudoAlgoritmo {
      */
     public void checkContracts(List<ContractXml> xmlContracts) {
         List<ContractEntity> dbContracts = contractController.findContractEntityEntities();
+        
         Date dateNow = new Date();
         List<ContractEntity> deletedContract = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
+        
         for (ContractEntity dbContract : dbContracts) {
             if (dbContract.getDateExpiredFormatted().after(dateNow)) {
                 fixExpiredContract(dbContract);
                 continue;
             }
             boolean trovato = false;
+            
             for (ContractXml xmlContract : xmlContracts) {
                 if (dbContract.getContractID().equals(xmlContract.getContractID())) {
                     trovato = true;

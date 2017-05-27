@@ -52,146 +52,6 @@ public class ManagerSQLMicrimsDB {
         return instance;
     }
 
-    
-    /**
-     * Update contract
-     * Chance status from outstanding to completed
-     * Update field sell price
-     * @param value
-     * @param id 
-     */    
-    public void updateContract(ContractEntity contractEntity){
-//        init();
-        
-        try {
-            EntityManager updateContractEM = 
-             entityManagerFactoryEMF.createEntityManager();
-                     
-            if ( updateContractEM != null ){
-                EntityTransaction updateTransactionET =
-                 updateContractEM.getTransaction();
-
-                updateTransactionET.begin();
-
-                Query query = getQueryDB(contractEntity, updateContractEM);
-
-                query.setParameter("id", contractEntity.getId() );
-
-                query.executeUpdate();
-                updateTransactionET.commit();
-             }            
-        } catch (Exception e) {
-            System.out.println("ManagerMicrimsDB updateContract");
-            e.printStackTrace();
-            return;
-        }
-    }
-    
-    /**
-     * Get Query DB
-     * @param value
-     * @param contractEntity
-     * @param entityManagerEM
-     * @return Query
-     */
-    private Query getQueryDB(ContractEntity contractEntity, EntityManager entityManagerEM){
-
-        // check contract.getPriceSell and contractEntity.getPriceSell are differnt       
-        // DBG fa cagare
-        if ( contractEntity.getTempQualcosaDBG() == 1 ){
-            Query query = updatePriceSell(contractEntity, entityManagerEM);
-            contractEntity.setTempQualcosaDBG(0);
-            return query;
-        }
-        
-       // check and update status from outstanding to completed
-        if ( contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus() )){
-            // Change value from outstanding to completed
-            Query query = updateStatusContract(contractEntity, entityManagerEM);
-            return query;
-        }
-        
-        // update status to expired
-        if ( contractEntity.getStatusContract().equals(StatusEnum.EXPIRED.getStatus())){
-            Query query = updateStatusContractRemoveID(contractEntity, entityManagerEM);
-            return query;             
-        }
-        
-        return null;
-    }
-
-        /**
-     * Change value sell price
-     * @param value
-     * @param id
-     * @param entityManagerEM
-     * @return Query
-     */
-    private Query updatePriceSell(ContractEntity contractEntity, EntityManager entityManagerEM){
-        Long id = contractEntity.getId();
-        String value = contractEntity.getPriceBuyUnformatted();
-        
-        Query query = entityManagerEM.createQuery
-        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.priceBuy = '"
-        + value + "' WHERE CONTRACTENTITY.id = :id" );
-        return query;        
-    }
-    
-    /**
-     * DGB DateCompleted non viene inserito nel campo
-     * Change value from outstanding to completed
-     * @param value
-     * @param id
-     * @param entityManagerEM
-     * @return Query
-     */
-    private Query updateStatusContract(ContractEntity contractEntity, EntityManager entityManagerEM){
-        Long id = contractEntity.getId();
-        String statusContract = contractEntity.getStatusContract();
-        Date dateCompleted = contractEntity.getDateCompletedUnformatted();
-        // :id
-        
-        Query query = entityManagerEM.createQuery
-        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= :" + dateCompleted + " , "
-       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
-        
-        
-//        Query query = entityManagerEM.createQuery
-//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= '" + dateCompleted + "' , "
-//       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
-        
-//        Query query = entityManagerEM.createQuery
-//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.statusContract = '"
-//        + statusContract  + "'  WHERE CONTRACTENTITY.id = :id  "  );
-        
-        return query;
-    }
-
-    /**
-     * THIS IS CRIME AGAINST HUMANITY!!!!!!!
-     * 
-     * Quando un contrattato in outstading scade il contractID viene recilato per
-     * uno nuovo contratto, mentre quello vecchio viene perso.
-     * Cancello contractID proveniente da Eve ma l'oggetto non viene perso grazie
-     * l'ID di mysql che resta in archivio. Il suo status passa da "Oustanding" a "Expired"
-     * @param contractEntity
-     * @param entityManagerEM
-     * @return Query
-     */
-    private Query updateStatusContractRemoveID(ContractEntity contractEntity, 
-     EntityManager entityManagerEM){
-        Long id = contractEntity.getId();
-        String statusContract = contractEntity.getStatusContract();
-        
-        Query query = entityManagerEM.createQuery(
-         "UPDATE ContractEntity contractEntity SET CONTRACTENTITY.statusContract ='" + statusContract 
-         + "', CONTRACTENTITY.contractID='' WHERE CONTRACTENTITY.id = :id");
-        return query;
-    }    
-    
-    
-    // ------------------------------------------------------------------------------------------------
-    
     /**
      * DBG NON MI PIACE
      * Lo voglio riportare direttamente in oggetto tralasciando doppioni
@@ -371,6 +231,142 @@ public class ManagerSQLMicrimsDB {
      */
     public ContractEntity getContractByID( ContractEntity contractEntity) {
         return contractEntityJpaController.findContractEntity(contractEntity.getId());
+    }
+       
+    /**
+     * Update contract
+     * Chance status from outstanding to completed
+     * Update field sell price
+     * @param value
+     * @param id 
+     */
+    public void updateContract(ContractEntity contractEntity){
+//        init();
+        
+        try {
+            EntityManager updateContractEM = 
+             entityManagerFactoryEMF.createEntityManager();
+                     
+            if ( updateContractEM != null ){
+                EntityTransaction updateTransactionET =
+                 updateContractEM.getTransaction();
+
+                updateTransactionET.begin();
+
+                Query query = getQueryDB(contractEntity, updateContractEM);
+
+                query.setParameter("id", contractEntity.getId() );
+
+                query.executeUpdate();
+                updateTransactionET.commit();
+             }            
+        } catch (Exception e) {
+            System.out.println("ManagerMicrimsDB updateContract");
+            e.printStackTrace();
+            return;
+        }
+    }
+    
+    /**
+     * Get Query DB
+     * @param value
+     * @param contractEntity
+     * @param entityManagerEM
+     * @return Query
+     */
+    private Query getQueryDB(ContractEntity contractEntity, EntityManager entityManagerEM){
+
+        // check contract.getPriceSell and contractEntity.getPriceSell are differnt       
+        // DBG fa cagare
+        if ( contractEntity.getTempQualcosaDBG() == 1 ){
+            Query query = updatePriceSell(contractEntity, entityManagerEM);
+            contractEntity.setTempQualcosaDBG(0);
+            return query;
+        }
+        
+       // check and update status from outstanding to completed
+        if ( contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus() )){
+            // Change value from outstanding to completed
+            Query query = updateStatusContract(contractEntity, entityManagerEM);
+            return query;
+        }
+        
+        // update status to expired
+        if ( contractEntity.getStatusContract().equals(StatusEnum.EXPIRED.getStatus())){
+            Query query = updateStatusContractRemoveID(contractEntity, entityManagerEM);
+            return query;             
+        }
+        
+        return null;
+    }
+
+        /**
+     * Change value sell price
+     * @param value
+     * @param id
+     * @param entityManagerEM
+     * @return Query
+     */
+    private Query updatePriceSell(ContractEntity contractEntity, EntityManager entityManagerEM){
+        Long id = contractEntity.getId();
+        String value = contractEntity.getPriceBuyUnformatted();
+        
+        Query query = entityManagerEM.createQuery
+        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.priceBuy = '"
+        + value + "' WHERE CONTRACTENTITY.id = :id" );
+        return query;        
+    }
+    
+    /**
+     * DGB DateCompleted non viene inserito nel campo
+     * Change value from outstanding to completed
+     * @param value
+     * @param id
+     * @param entityManagerEM
+     * @return Query
+     */
+    private Query updateStatusContract(ContractEntity contractEntity, EntityManager entityManagerEM){
+        Long id = contractEntity.getId();
+        String statusContract = contractEntity.getStatusContract();
+        Date dateCompleted = contractEntity.getDateCompletedUnformatted();
+        // :id
+        
+        Query query = entityManagerEM.createQuery
+        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= :" + dateCompleted + " , "
+       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
+        
+        
+//        Query query = entityManagerEM.createQuery
+//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= '" + dateCompleted + "' , "
+//       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
+        
+//        Query query = entityManagerEM.createQuery
+//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.statusContract = '"
+//        + statusContract  + "'  WHERE CONTRACTENTITY.id = :id  "  );
+        
+        return query;
+    }
+
+    /**
+     * THIS IS CRIME AGAINST HUMANITY!!!!!!!
+     * 
+     * Quando un contrattato in outstading scade il contractID viene recilato per
+     * uno nuovo contratto, mentre quello vecchio viene perso.
+     * Cancello contractID proveniente da Eve ma l'oggetto non viene perso grazie
+     * l'ID di mysql che resta in archivio. Il suo status passa da "Oustanding" a "Expired"
+     * @param contractEntity
+     * @param entityManagerEM
+     * @return Query
+     */
+    private Query updateStatusContractRemoveID(ContractEntity contractEntity, 
+     EntityManager entityManagerEM){
+        Long id = contractEntity.getId();
+        String statusContract = contractEntity.getStatusContract();
+        
+        Query query = entityManagerEM.createQuery(
+         "UPDATE ContractEntity contractEntity SET CONTRACTENTITY.statusContract ='" + statusContract 
+         + "', CONTRACTENTITY.contractID='' WHERE CONTRACTENTITY.id = :id");
+        return query;
     }
     
     /**

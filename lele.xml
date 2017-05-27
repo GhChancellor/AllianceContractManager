@@ -2,18 +2,31 @@
 <currentTime>2016-10-18 12:28:29</currentTime>
 <result>
 <rowset name="contractList" key="contractID" columns="contractID,issuerID,issuerCorpID,assigneeID,acceptorID,startStationID,endStationID,type,status,title,forCorp,availability,dateIssued,dateExpired,dateAccepted,numDays,dateCompleted,price,reward,collateral,buyout,volume">
-    <!-- Expired -->
-<row contractID="100" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
- endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Svipul RR" forCorp="1" availability="Private" 
- dateIssued="2016-10-16 14:44:44" dateExpired="2016-10-30 14:44:04" dateAccepted="" numDays="0" dateCompleted="" price="125000000.00" 
- reward="0.00" collateral="0.00" buyout="0.00" volume="47000"/>
 
-<row contractID="101" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
- endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Svipul RR" forCorp="1" availability="Private" 
- dateIssued="2016-10-16 14:34:04" dateExpired="2016-10-30 17:44:04" dateAccepted="" numDays="0" dateCompleted="" price="125000000.00" 
- reward="0.00" collateral="0.00" buyout="0.00" volume="47000"/>
+       <!-- Outstanding -->
+
+<row contractID="303" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
+ endStationID="1021669282268" type="ItemExchange" status="Completed" title="Omen Navy Issue Co2" forCorp="1" availability="Private" 
+ dateIssued="2016-10-09 00:14:28" dateExpired="2018-05-21 20:20:00" dateAccepted="" numDays="0" dateCompleted="2017-05-21 13:48:00" price="110000000.00" 
+ reward="0.00" collateral="0.00" buyout="0.00" volume="101000"/>   
+ 
+<!--
+
+<row contractID="300" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
+ endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Omen Navy Issue Co2" forCorp="1" availability="Private" 
+ dateIssued="2016-10-09 00:14:26" dateExpired="2018-05-18 12:58:00" dateAccepted="" numDays="0" dateCompleted="" price="110000000.00" 
+ reward="0.00" collateral="0.00" buyout="0.00" volume="101000"/> 
+
+<row contractID="300" issuerID="96596752" issuerCorpID="98465066" assigneeID="1695357456" acceptorID="0" startStationID="1021669282268" 
+ endStationID="1021669282268" type="ItemExchange" status="Outstanding" title="Omen Navy Issue Co2" forCorp="1" availability="Private" 
+ dateIssued="2016-10-09 00:14:26" dateExpired="2018-05-18 10:34:00" dateAccepted="" numDays="0" dateCompleted="" price="110000000.00" 
+ reward="0.00" collateral="0.00" buyout="0.00" volume="101000"/> 
+
+-->
 
 </rowset>
 </result>
 <cachedUntil>2016-10-18 12:42:29</cachedUntil>
 </eveapi>
+
+<!-- dateIssued=    dateExpired=     dateAccepted=  Outstanding  Completed  2017-05-21 13:48:00 -->

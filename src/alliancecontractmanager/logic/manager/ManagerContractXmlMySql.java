@@ -29,6 +29,10 @@ public class ManagerContractXmlMySql {
         initDBContract(userApiEntitys);
     }
     
+    public ManagerContractXmlMySql(){
+        
+    }
+    
     public void initDBContract(List < UserApiEntity > userApiEntitys){
         boolean boolean001 = false;
 
@@ -77,25 +81,36 @@ public class ManagerContractXmlMySql {
         
         for (ContractXml contractXml : contractXmls) {
            
-//            ContractEntity contractEntity = new ContractEntity();
-//            contractEntity.setContractID(contractXml.getContractID());
+            ContractEntity contractEntity = new ContractEntity();
+            contractEntity.setContractID(contractXml.getContractID());
             
-//            contractEntity = ManagerSQLMicrimsDB.getInstance().getLongId(contractEntity);
-            // DBGLUCA
-            ContractEntity contractEntity = ManagerSQLMicrimsDB.getInstance().getContractByID(Long.parseLong(contractXml.getContractID()));
+            contractEntity = ManagerSQLMicrimsDB.getInstance().getContractEveId(contractEntity);
             
-            // if contract IS:
-            if ( isExpired(contractEntity))
-                return;
-            
-            if ( isNew(userApiEntity, contractXml, contractEntity )) // controllare
+            if ( isNew(userApiEntity, contractXml, contractEntity))
                 return;
 
+            if ( isExpired(contractEntity))
+                return;            
+            
             if ( isStatusCompleted(contractEntity, contractXml))
                 return;
 
             if ( isStatusDelete(contractEntity))
                 return;
+
+
+//            // if contract IS:
+//            if ( isExpired(contractEntity))
+//                return;
+//            
+//            if ( isNew(userApiEntity, contractXml, contractEntity )) // controllare
+//                return;
+//
+//            if ( isStatusCompleted(contractEntity, contractXml))
+//                return;
+//
+//            if ( isStatusDelete(contractEntity))
+//                return;
         }
     }
     
@@ -109,14 +124,32 @@ public class ManagerContractXmlMySql {
     private Boolean isNew(UserApiEntity userApiEntity, ContractXml contractXml, 
      ContractEntity contractEntity){
         
-        List < ContractXml > contractXmls = new ArrayList<>();
-        contractXmls.add(contractXml);
-        
+        // the contract IS NEW !!!
         if (contractEntity == null ){
-            checkAndWrite(userApiEntity, contractXmls);
-            return true;
+            contractEntity = new ContractEntity();
+            contractEntity.setDateIssued(contractXml.getDateIssued());
+            
+            // avoid insert if already exists the same dateIssued
+            System.out.println(""+ ManagerSQLMicrimsDB.getInstance().getContractDateIssued(contractEntity));
+            if ( ManagerSQLMicrimsDB.getInstance().getContractDateIssued(contractEntity) == null) {
+                List < ContractXml > contractXmls = new ArrayList<>();
+                 contractXmls.add(contractXml);
+                
+                checkAndWrite(userApiEntity, contractXmls);
+                return true;
+            }
+         
         }
-        return false;
+        return false;   
+        
+//        List < ContractXml > contractXmls = new ArrayList<>();
+//        contractXmls.add(contractXml);
+//        
+//        if (contractEntity == null ){
+//            checkAndWrite(userApiEntity, contractXmls);
+//            return true;
+//        }
+//        return false;
     }
     
     /**
@@ -136,6 +169,8 @@ public class ManagerContractXmlMySql {
      * @return boolean
      */
     private Boolean isDateExpired(ContractEntity contractEntity){       
+        
+        
         Long dateCurrent = new Date().getTime();
         Long dateContract = contractEntity.getDateExpiredUnformatted().getTime();
         
@@ -155,6 +190,7 @@ public class ManagerContractXmlMySql {
          contractXml.getStatus().equals(StatusEnum.COMPLETED.getStatus())){
             
             contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
+            contractEntity.setDateCompleted(contractXml.getDateCompleted());
             ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);      
             return true;
         }
@@ -182,13 +218,20 @@ public class ManagerContractXmlMySql {
      * Don't write in db
      */
     public void checkAndWrite(UserApiEntity userApiEntity, List <ContractXml> contractXmls ){
-       
+
         for (ContractXml contractXml : contractXmls) {
             // if don't have title of the contract and price is 0.00 Don't write in db
             if (!contractXml.getTitle().equals("")){
                 if (!contractXml.getPrice().equals("0.00")){
                     if (!contractXml.getTitle().equals("Deleted")){
-                       userApiEntity = buildContract(userApiEntity, contractXml);
+                        ContractEntity contractEntity = new ContractEntity();
+                        contractEntity.setDateIssued(contractXml.getDateIssued());
+                        
+                        // NON FUNZIONA!!!! il Controllo
+                        // avoid insert if already exists the same dateIssued
+                        if (ManagerSQLMicrimsDB.getInstance().getContractDateIssued(contractEntity) == null){
+                            userApiEntity = buildContract(userApiEntity, contractXml);
+                        }
                     }  
                 }
             }             
@@ -196,6 +239,20 @@ public class ManagerContractXmlMySql {
         
         if ( !contractXmls.isEmpty() )
             writeValueInTheDatabase(userApiEntity);
+        
+//        for (ContractXml contractXml : contractXmls) {
+//            // if don't have title of the contract and price is 0.00 Don't write in db
+//            if (!contractXml.getTitle().equals("")){
+//                if (!contractXml.getPrice().equals("0.00")){
+//                    if (!contractXml.getTitle().equals("Deleted")){
+//                       userApiEntity = buildContract(userApiEntity, contractXml);
+//                    }  
+//                }
+//            }             
+//        }
+//        
+//        if ( !contractXmls.isEmpty() )
+//            writeValueInTheDatabase(userApiEntity);
     }     
 
     /**
@@ -233,7 +290,7 @@ public class ManagerContractXmlMySql {
      * @param UserApiIndexEntity userApiIndexEntity 
      */
     private void writeValueInTheDatabase(UserApiEntity userApiEntity){
-        if ( ManagerSQLUser.getInstance().getUserApiEntities() .isEmpty() ){
+        if ( ManagerSQLUser.getInstance().getUserApiEntities().isEmpty() ){
             ManagerSQLMicrimsDB.getInstance().addContract(userApiEntity);
             ManagerSQLUser.getInstance().addUserApiEntity(userApiEntity);
         }else{
@@ -264,10 +321,6 @@ public class ManagerContractXmlMySql {
                 }                
             }                     
         }        
-    }
-
-    public ManagerContractXmlMySql() {
-    }
-    
+    }    
     
 }

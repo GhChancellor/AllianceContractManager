@@ -9,6 +9,7 @@ import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.gui.logicgui.event.Listener;
 import alliancecontractmanager.logic.enumname.StatusEnum;
+import alliancecontractmanager.logic.manager.ManagerContractXmlMySql;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import java.beans.Beans;
@@ -20,7 +21,8 @@ import java.util.List;
  * @author lele
  */
 public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
-    
+     static boolean  xxx = true;
+     
     /**
      * Creates new form ShowContractJPanel
      */
@@ -80,7 +82,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
         jComboBoxStatusContract01 = new javax.swing.JComboBox<>();
         jButtonDeleteExpired = new javax.swing.JButton();
         jComboBoxUser = new javax.swing.JComboBox<>();
-        jButtonAggiornamento = new javax.swing.JButton();
+        jButtonUpdateUser = new javax.swing.JButton();
+        jButtonUpdateContract = new javax.swing.JButton();
 
         jComboBoxNameShipRenderer011.setText("jComboBoxNameShipRenderer011");
 
@@ -131,10 +134,17 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
             }
         });
 
-        jButtonAggiornamento.setText("DBG aggiornamento");
-        jButtonAggiornamento.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButtonUpdateUser.setText("Update User");
+        jButtonUpdateUser.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButtonAggiornamentoMouseClicked(evt);
+                jButtonUpdateUserMouseClicked(evt);
+            }
+        });
+
+        jButtonUpdateContract.setText("Update contract");
+        jButtonUpdateContract.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonUpdateContractMouseClicked(evt);
             }
         });
 
@@ -153,7 +163,9 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
                 .addGap(18, 18, 18)
                 .addComponent(jButtonDeleteExpired, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonAggiornamento)
+                .addComponent(jButtonUpdateUser)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonUpdateContract)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -165,7 +177,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
                     .addComponent(jComboBoxStatusContract01, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonDeleteExpired)
                     .addComponent(jComboBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonAggiornamento))
+                    .addComponent(jButtonUpdateUser)
+                    .addComponent(jButtonUpdateContract))
                 .addGap(14, 14, 14)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
         );
@@ -303,7 +316,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
              
     }//GEN-LAST:event_jComboBoxUserActionPerformed
 
-    private void jButtonAggiornamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAggiornamentoMouseClicked
+    private void jButtonUpdateUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonUpdateUserMouseClicked
         System.out.println("");
         
         List < UserApiEntity > userApiEntitys = 
@@ -345,13 +358,24 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener{
         }
 
         writeValueToTable(contractEntitys);  
-    }//GEN-LAST:event_jButtonAggiornamentoMouseClicked
+    }//GEN-LAST:event_jButtonUpdateUserMouseClicked
+
+    private void jButtonUpdateContractMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonUpdateContractMouseClicked
+       
+        List < UserApiEntity > userApiEntitys = 
+         ManagerLoginSql.getInstance().getUserApiEntities();
+
+        ManagerContractXmlMySql managerContractXmlMySql = 
+         new ManagerContractXmlMySql(userApiEntitys);
+        
+    }//GEN-LAST:event_jButtonUpdateContractMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTableShowContract;
-    private javax.swing.JButton jButtonAggiornamento;
     private javax.swing.JButton jButtonDeleteExpired;
+    private javax.swing.JButton jButtonUpdateContract;
+    private javax.swing.JButton jButtonUpdateUser;
     private javax.swing.JComboBox<ContractEntity> jComboBoxNameShip01;
     private alliancecontractmanager.gui.mr.model.JComboBox.JComboBoxNameShip01Model jComboBoxNameShip01Model1;
     private alliancecontractmanager.gui.mr.renderer.jcombobox.JComboBoxNameShipRenderer jComboBoxNameShipRenderer011;
