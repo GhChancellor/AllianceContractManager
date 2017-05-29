@@ -84,6 +84,14 @@ public class ManagerSQLMicrimsDB {
             Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+   
+   public void updateUser(UserApiEntity user){
+        try {
+            userKeyIDJpaController.edit(user);
+        } catch (Exception ex) {
+            Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
 //    /**
 //     * Get Query DB
@@ -444,6 +452,32 @@ public class ManagerSQLMicrimsDB {
         }
     }
 
+     /**
+     * Get specific Contract ID ( Eve Id ) from Eve Server
+     * @param contractEntity
+     * @return 
+     */
+    public ContractEntity getContractByEveId(String contractId){
+        try {
+            TypedQuery < ContractEntity > getDBContractIdTQ =
+             entityManagerEM.createNamedQuery("getContractsId", ContractEntity.class);
+
+            getDBContractIdTQ.setParameter("id", contractId);
+
+            List < ContractEntity > contractEntitys = getDBContractIdTQ.getResultList();
+            
+            if ( contractEntitys.isEmpty()){
+                return null;
+            }else{
+                return contractEntitys.get(0);
+            }                                
+        } catch (Exception e) {
+            System.out.println("ManagerMicrimsDB getDBContractId");
+            e.printStackTrace();
+            return null;
+        }
+    }   
+    
     /**
      * Get specific Contract ID ( Eve Id ) from Eve Server
      * @param contractEntity

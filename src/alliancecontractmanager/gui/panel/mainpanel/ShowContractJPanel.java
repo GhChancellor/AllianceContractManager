@@ -8,6 +8,7 @@ package alliancecontractmanager.gui.panel.mainpanel;
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.gui.logicgui.event.Listener;
+import alliancecontractmanager.logic.UpdateContractProva.PseudoAlgoritmo;
 import alliancecontractmanager.logic.enumname.StatusEnum;
 import alliancecontractmanager.logic.manager.ManagerContractXmlMySql;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
@@ -140,11 +141,21 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
                 jButtonUpdateUserMouseClicked(evt);
             }
         });
+        jButtonUpdateUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateUserActionPerformed(evt);
+            }
+        });
 
         jButtonUpdateContract.setText("Update contract");
         jButtonUpdateContract.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonUpdateContractMouseClicked(evt);
+            }
+        });
+        jButtonUpdateContract.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateContractActionPerformed(evt);
             }
         });
 
@@ -378,6 +389,22 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
                 = new ManagerContractXmlMySql(userApiEntitys);
 
     }//GEN-LAST:event_jButtonUpdateContractMouseClicked
+
+    private void jButtonUpdateUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateUserActionPerformed
+        
+        
+        
+    }//GEN-LAST:event_jButtonUpdateUserActionPerformed
+
+    private void jButtonUpdateContractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateContractActionPerformed
+        if(jComboBoxUser.getSelectedIndex()!=-1){
+              UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
+              System.out.println("USER SELEZIONATO: "+userApiEntity.getId() + "    NOME: "+userApiEntity.getNameCharacter());
+              PseudoAlgoritmo algo = new PseudoAlgoritmo();
+              System.out.println("UPDATING...");
+              algo.update(userApiEntity);
+        }
+    }//GEN-LAST:event_jButtonUpdateContractActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
