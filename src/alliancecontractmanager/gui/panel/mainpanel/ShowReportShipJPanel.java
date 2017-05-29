@@ -18,40 +18,44 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
 /**
  *
  * @author lele
  */
-public class ShowReportShipJPanel extends javax.swing.JPanel{
+public class ShowReportShipJPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form ShowNameShipRenderer
      */
     public ShowReportShipJPanel() {
         initComponents();
-        
-        if ( Beans.isDesignTime()){
-            List < ContractEntity > contractEntitys = new ArrayList<>();            
-        }else{
+
+        if (Beans.isDesignTime()) {
+            List< ContractEntity> contractEntitys = new ArrayList<>();
+        } else {
 //           initShowNameShipJPanel();    
             initGui();
         }
-        
+
     }
 
     /**
      * init jComboBoxNameShip02 get name from DB
      */
-    public void initShowNameShipJPanel(){
+    public void initShowNameShipJPanel() {
 //        ManagerDispatcher.getInstance().addListeners(this);               
     }
 
-    public void initGui(){
-        if (jComboBoxNameShip02.getSelectedIndex() != -1 ){
-            jComboBoxContractDateIssuedModel1.init( (UserApiEntity) jComboBoxUser.getSelectedItem(), 
-              (ContractEntity) jComboBoxNameShip02.getSelectedItem()  );                
-        }else{
+    public void initGui() {
+        if (jComboBoxNameShip02.getSelectedIndex() != -1) {
+            //            jComboBoxContractDateIssuedModel1.init((UserApiEntity) jComboBoxUser.getSelectedItem(),
+            //                    (ContractEntity) jComboBoxNameShip02.getSelectedItem());
+           UserApiEntity user =  (UserApiEntity) jComboBoxUser.getSelectedItem();
+            String title = ((ContractEntity) jComboBoxNameShip02.getSelectedItem()).getTitle();
+            String status = ((ContractEntity) jComboBoxNameShip02.getSelectedItem()).getStatusContract();
+            
+            jComboBoxContractDateIssuedModel1.init(user.getId(), title, status);
+        } else {
             try {
                 throw new NoVesselSoldException();
             } catch (Exception e) {
@@ -59,6 +63,7 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
             }
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -190,66 +195,62 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
     private void jComboBoxContractDateIssuedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxContractDateIssuedActionPerformed
         // http://stackoverflow.com/questions/5937017/how-to-convert-a-date-in-this-format-tue-jul-13-000000-cest-2010-to-a-java-d
         // http://stackoverflow.com/questions/1341104/parameter-in-like-clause-jpql
-        
-        if ( jComboBoxContractDateIssued.getItemCount() == 0){
+
+        if (jComboBoxContractDateIssued.getItemCount() == 0) {
             return;
         }
-        
+
         UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
         ContractEntity contractEntity = (ContractEntity) jComboBoxContractDateIssued.getSelectedItem();
-                
-        List < ContractEntity > contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatusDate(userApiEntity, contractEntity);
-        
+
+        List< ContractEntity> contractEntitys
+                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatusDate(userApiEntity, contractEntity);
+
         for (ContractEntity contractEntity1 : contractEntitys) {
-            System.out.println("XXX "+ contractEntity1.getTitle() + " " + 
-             contractEntity1.getDateIssuedFormatted());
+            System.out.println("XXX " + contractEntity1.getTitle() + " "
+                    + contractEntity1.getDateIssuedFormatted());
         }
-        
-        writeValueToTable(contractEntitys);  
+
+        writeValueToTable(contractEntitys);
     }//GEN-LAST:event_jComboBoxContractDateIssuedActionPerformed
-    
+
     private void jComboBoxUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUserActionPerformed
-        if ( jComboBoxUser.getSelectedIndex() == -1 )
+        if (jComboBoxUser.getSelectedIndex() == -1) {
             return;
-        
+        }
+
         UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
-       
+
         jComboBoxNameShip02Model1.removeAllElements();
         jComboBoxContractDateIssuedModel1.removeAllElements();
-        
-        
+
         int selectedUserIndex = jComboBoxUser.getSelectedIndex();
-       
+
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
-        
-        if ( jComboBoxNameShip02.getSelectedIndex() == -1 ) {
+
+        if (jComboBoxNameShip02.getSelectedIndex() == -1) {
             String titleContract = userApiEntity.getAllContractEntitys().get(0).getTitle();
             contractEntity.setTitle(titleContract);
-            
-        }else{
-            contractEntity.setTitle(jComboBoxNameShip02.getSelectedItem().toString() );
+
+        } else {
+            contractEntity.setTitle(jComboBoxNameShip02.getSelectedItem().toString());
         }
-        
-        List < ContractEntity > contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
 
-        if ( ! contractEntitys.isEmpty() ){
-            
+        List< ContractEntity> contractEntitys
+                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
+
+        if (!contractEntitys.isEmpty()) {
+
             // DBG Perchè " saltella " a jComboBoxNameShip02ActionPerformed ???            
-            jComboBoxNameShip02Model1.addElements(contractEntitys,1);
-
-            
+            jComboBoxNameShip02Model1.addElements(contractEntitys, 1);
 
 //            contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);
 //            // DBG RIPETIZIONE
 //            jComboBoxContractDateIssuedModel1.setDate(userApiEntity, contractEntity);
+            writeValueToTable(contractEntitys);
 
-
-            writeValueToTable(contractEntitys);             
-            
-        }        
+        }
     }//GEN-LAST:event_jComboBoxUserActionPerformed
 
     private void jScrollPane1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseReleased
@@ -257,88 +258,83 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_jScrollPane1MouseReleased
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        List < UserApiEntity > userApiEntitys = 
-         ManagerLoginSql.getInstance().getUserApiEntities();
+        List< UserApiEntity> userApiEntitys
+                = ManagerLoginSql.getInstance().getUserApiEntities();
 
         jComboBoxUserModel1.removeAllElements();
 
-        
         // DBG questa parte è copiata da jComboBoxUserActionPerformed correggere
-        
         for (UserApiEntity userApiEntity : userApiEntitys) {
             jComboBoxUserModel1.addElement(userApiEntity);
         }
-        
+
         UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
-        
+
         jComboBoxNameShip02Model1.removeAllElements();
         jComboBoxContractDateIssuedModel1.removeAllElements();
-        
+
         // DBG Perchè non funziona?
         jTableShowReportShipModel1.clear();
-        
+
         int selectedUserIndex = jComboBoxUser.getSelectedIndex();
-       
+
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
-        
-        if ( jComboBoxNameShip02.getSelectedIndex() == -1 ) {
+
+        if (jComboBoxNameShip02.getSelectedIndex() == -1) {
             String titleContract = userApiEntity.getAllContractEntitys().get(0).getTitle();
             contractEntity.setTitle(titleContract);
-            
-        }else{
-            contractEntity.setTitle(jComboBoxNameShip02.getSelectedItem().toString() );
+
+        } else {
+            contractEntity.setTitle(jComboBoxNameShip02.getSelectedItem().toString());
         }
-        
-        List < ContractEntity > contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
 
-        if ( ! contractEntitys.isEmpty() ){
-            
+        List< ContractEntity> contractEntitys
+                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
+
+        if (!contractEntitys.isEmpty()) {
+
             // DBG Perchè " saltella " a jComboBoxNameShip02ActionPerformed ???            
-            jComboBoxNameShip02Model1.addElements(contractEntitys,1);
-
-            
+            jComboBoxNameShip02Model1.addElements(contractEntitys, 1);
 
 //            contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);
 //            // DBG RIPETIZIONE
 //            jComboBoxContractDateIssuedModel1.setDate(userApiEntity, contractEntity);
+            writeValueToTable(contractEntitys);
 
-
-            writeValueToTable(contractEntitys);             
-            
-        }    
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * Write Value To jTable in ShowReportShipJPanel
-     * @param contractEntity 
+     *
+     * @param contractEntity
      */
-    private void writeValueToTable( List < ContractEntity > contractEntitys ){
+    private void writeValueToTable(List< ContractEntity> contractEntitys) {
         jTableShowReportShipModel1.clear();
-        
+
         for (ContractEntity contractEntity : contractEntitys) {
-            if ( contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus())){
-                if (!contractEntity.getPriceBuy().isEmpty() &&
-                    !contractEntity.getPriceSell().isEmpty()){
+            if (contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus())) {
+                if (!contractEntity.getPriceBuy().isEmpty()
+                        && !contractEntity.getPriceSell().isEmpty()) {
 
                     ContractFormulas contractFormulas = new ContractFormulas(contractEntity);
                     contractEntity.setProfitPercent(contractFormulas.getProfitPercent());
-                    contractEntity.setProfitPerShip(contractFormulas.getProfitPerShip() );
+                    contractEntity.setProfitPerShip(contractFormulas.getProfitPerShip());
                 }
             }
-            jTableShowReportShipModel1.addContract(contractEntity);              
+            jTableShowReportShipModel1.addContract(contractEntity);
         }
-    }    
-    
-    private void jComboBoxNameShip02ActionPerformedDBG(java.awt.event.ActionEvent evt) { 
+    }
+
+    private void jComboBoxNameShip02ActionPerformedDBG(java.awt.event.ActionEvent evt) {
         System.out.println("jComboBoxNameShip02ActionPerformed");
-        
-        if ( jComboBoxNameShip02.getItemCount() == 0 ){
+
+        if (jComboBoxNameShip02.getItemCount() == 0) {
             return;
         }
-        
-        if ( jComboBoxNameShip02.getSelectedIndex() == -1 ){
+
+        if (jComboBoxNameShip02.getSelectedIndex() == -1) {
             try {
                 throw new NoVesselSoldException();
             } catch (Exception e) {
@@ -346,23 +342,24 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
             }
             return;
         }
-        
-        jComboBoxContractDateIssuedModel1.removeAllElements();
-        
-        ContractEntity contractEntity = new ContractEntity();      
-        contractEntity.setTitle( ((ContractEntity) jComboBoxNameShip02.getSelectedItem()).getTitle());
-        contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());    
-       
-        UserApiEntity userApiEntity = ( UserApiEntity ) jComboBoxUser.getSelectedItem();
-        
-        List < ContractEntity > contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);     
-        
-        // DBG RIPETIZIONE
-        jComboBoxContractDateIssuedModel1.setDate(userApiEntity, contractEntity);
 
-        writeValueToTable(contractEntitys);          
-    }          
+        jComboBoxContractDateIssuedModel1.removeAllElements();
+
+//        ContractEntity contractEntity = new ContractEntity();      
+//        contractEntity.setTitle( ((ContractEntity) jComboBoxNameShip02.getSelectedItem()).getTitle());
+//        contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());    
+        String title = ((ContractEntity) jComboBoxNameShip02.getSelectedItem()).getTitle();
+
+        UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
+
+        List< ContractEntity> contractEntitys
+                = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity.getId(), StatusEnum.COMPLETED.getStatus(), title);
+
+        // DBG RIPETIZIONE
+        jComboBoxContractDateIssuedModel1.setDate(userApiEntity.getId(), title, StatusEnum.COMPLETED.getStatus());
+
+        writeValueToTable(contractEntitys);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTableShowReportShip;
@@ -383,7 +380,6 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
 
 //    @Override
 //    public void showReportShipJPanelUpdate(ContractEntity contractEntity) {
-        
 //        this.jComboBoxContractDateIssuedModel1.removeAllElements();
 ////        this.jComboBoxContractDateIssuedRenderer.addItem("All");
 //        
@@ -394,6 +390,4 @@ public class ShowReportShipJPanel extends javax.swing.JPanel{
 //
 //        this.jComboBoxContractDateIssuedRenderer.setSelectedIndex(0);
 //    }
-    
-
 }

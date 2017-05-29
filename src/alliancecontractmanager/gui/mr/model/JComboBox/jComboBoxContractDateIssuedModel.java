@@ -23,13 +23,12 @@ public class jComboBoxContractDateIssuedModel extends JComboBoxGenericModel {
         }
     }
 
-    public void init(UserApiEntity userApiEntity, ContractEntity contractEntity ){
-        setDate(userApiEntity, contractEntity);
+    public void init(Long userApiId, String title, String status ){
+        setDate(userApiId, title, status);
     }
     
-    public void setDate(UserApiEntity userApiEntity, ContractEntity contractEntity){
-        List< ContractEntity> contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);
+    public void setDate(Long userApiId, String title, String status){
+        List< ContractEntity> contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiId, title, status);
 
         // 2 is mean "add date"
         addElements(contractEntitys,2);        

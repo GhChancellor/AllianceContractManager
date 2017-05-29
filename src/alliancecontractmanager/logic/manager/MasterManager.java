@@ -64,10 +64,10 @@ public class MasterManager {
         UserApiEntity userApiEntity = new UserApiEntity("111", "222", "lele", true);
         userApiEntitys.add(userApiEntity);
         
-        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca", false);
+        UserApiEntity userApiEntity02 = new UserApiEntity("333", "444", "luca", true);
         userApiEntitys.add(userApiEntity02);
         
-        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", false);
+        UserApiEntity userApiEntity03 = new UserApiEntity("555", "666", "lilo", true);
         userApiEntitys.add(userApiEntity03);
         
         return userApiEntitys;

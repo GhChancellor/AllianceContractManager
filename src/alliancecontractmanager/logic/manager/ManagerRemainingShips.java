@@ -39,19 +39,16 @@ public class ManagerRemainingShips {
      * Init Doctrine
      */
     public void initDoctrine(){
-        ContractEntity contractEntity = new ContractEntity();
-        contractEntity.setStatusContract(StatusEnum.OUTSTADING.getStatus());
-                
+        
         List < ContractEntity > contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getContractsByStatus(contractEntity);
+         ManagerSQLMicrimsDB.getInstance().getContractsByStatus(StatusEnum.OUTSTADING.getStatus());
         
         for (ContractEntity contractEntity1 : contractEntitys) {
             // Add Doctrine Outstanding Map
             addDoctrineOutstandingMap(contractEntity1);
         }
         
-        contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
-        contractEntitys = ManagerSQLMicrimsDB.getInstance().getContractsByStatus(contractEntity);
+        contractEntitys = ManagerSQLMicrimsDB.getInstance().getContractsByStatus(StatusEnum.COMPLETED.getStatus());
         
         for (ContractEntity contractEntity1 : contractEntitys) {
             // Add Doctrine Completed Map
