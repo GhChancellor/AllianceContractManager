@@ -35,8 +35,8 @@ public class MasterManager {
             
 
         // Init contract User
-        ManagerContractXmlMySql managerContractXmlMySql = 
-         new ManagerContractXmlMySql(userApiEntitys); 
+        ManagerContracts managerContractXmlMySql = 
+         new ManagerContracts(userApiEntitys); 
         
         
 //        List < ContractEntity > contractEntitys = 
@@ -49,10 +49,10 @@ public class MasterManager {
         ShowContractJFrame showContractJFrame = new ShowContractJFrame();
         showContractJFrame.setVisible(true);
         showContractJFrame.setLocationRelativeTo(showContractJFrame);
-//        
-//        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
-//        showReportShipJFrame.setVisible(true);
-//        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
+        
+        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
+        showReportShipJFrame.setVisible(true);
+        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
 //        
 //        ShowRemainShipsJFrame showRemainShipsJFrame = new ShowRemainShipsJFrame();
 //        showRemainShipsJFrame.setVisible(true);

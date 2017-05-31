@@ -86,7 +86,6 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
         jComboBoxNameShip02 = new javax.swing.JComboBox<>();
         jComboBoxContractDateIssued = new javax.swing.JComboBox<>();
         jComboBoxUser = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
 
         jComboBoxNameShipRenderer1.setText("jComboBoxNameShipRenderer1");
 
@@ -149,13 +148,6 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("DBG Aggiornamento");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -170,9 +162,7 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
                 .addComponent(jComboBoxNameShip02, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jComboBoxContractDateIssued, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(138, 138, 138))
+                .addGap(265, 265, 265))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,9 +171,8 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBoxNameShip02, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxContractDateIssued, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                    .addComponent(jComboBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(ShowNameShipJPanel_Continer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -200,11 +189,13 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
             return;
         }
 
+        
         UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
         ContractEntity contractEntity = (ContractEntity) jComboBoxContractDateIssued.getSelectedItem();
 
-        List< ContractEntity> contractEntitys
-                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatusDate(userApiEntity, contractEntity);
+        List< ContractEntity> contractEntitys =
+         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatusDate
+         (userApiEntity.getId(), contractEntity.getStatusContract(), contractEntity.getDateIssuedUnformatted());
 
         for (ContractEntity contractEntity1 : contractEntitys) {
             System.out.println("XXX " + contractEntity1.getTitle() + " "
@@ -238,7 +229,7 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
         }
 
         List< ContractEntity> contractEntitys
-                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
+                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity.getId(), StatusEnum.COMPLETED.getStatus());
 
         if (!contractEntitys.isEmpty()) {
 
@@ -256,54 +247,6 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
     private void jScrollPane1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseReleased
 
     }//GEN-LAST:event_jScrollPane1MouseReleased
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        List< UserApiEntity> userApiEntitys
-                = ManagerLoginSql.getInstance().getUserApiEntities();
-
-        jComboBoxUserModel1.removeAllElements();
-
-        // DBG questa parte è copiata da jComboBoxUserActionPerformed correggere
-        for (UserApiEntity userApiEntity : userApiEntitys) {
-            jComboBoxUserModel1.addElement(userApiEntity);
-        }
-
-        UserApiEntity userApiEntity = (UserApiEntity) jComboBoxUser.getSelectedItem();
-
-        jComboBoxNameShip02Model1.removeAllElements();
-        jComboBoxContractDateIssuedModel1.removeAllElements();
-
-        // DBG Perchè non funziona?
-        jTableShowReportShipModel1.clear();
-
-        int selectedUserIndex = jComboBoxUser.getSelectedIndex();
-
-        ContractEntity contractEntity = new ContractEntity();
-        contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
-
-        if (jComboBoxNameShip02.getSelectedIndex() == -1) {
-            String titleContract = userApiEntity.getAllContractEntitys().get(0).getTitle();
-            contractEntity.setTitle(titleContract);
-
-        } else {
-            contractEntity.setTitle(jComboBoxNameShip02.getSelectedItem().toString());
-        }
-
-        List< ContractEntity> contractEntitys
-                = ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
-
-        if (!contractEntitys.isEmpty()) {
-
-            // DBG Perchè " saltella " a jComboBoxNameShip02ActionPerformed ???            
-            jComboBoxNameShip02Model1.addElements(contractEntitys, 1);
-
-//            contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity, contractEntity);
-//            // DBG RIPETIZIONE
-//            jComboBoxContractDateIssuedModel1.setDate(userApiEntity, contractEntity);
-            writeValueToTable(contractEntitys);
-
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * Write Value To jTable in ShowReportShipJPanel
@@ -364,7 +307,6 @@ public class ShowReportShipJPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTableShowReportShip;
     private javax.swing.JPanel ShowNameShipJPanel_Continer;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<ContractEntity> jComboBoxContractDateIssued;
     private alliancecontractmanager.gui.mr.model.JComboBox.jComboBoxContractDateIssuedModel jComboBoxContractDateIssuedModel1;
     private alliancecontractmanager.gui.mr.renderer.jcombobox.jComboBoxContractDateIssuedRenderer jComboBoxContractDateIssuedRenderer1;

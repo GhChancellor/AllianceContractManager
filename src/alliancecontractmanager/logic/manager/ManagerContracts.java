@@ -19,17 +19,17 @@ import java.util.List;
  * 
  * @author lele
  */
-public class ManagerContractXmlMySql {
+public class ManagerContracts {
 
     /**
      * Init contract User
      * @param List < UserApiIndexEntity > userApiIndexEntity 
      */
-    public ManagerContractXmlMySql(List < UserApiEntity > userApiEntitys) {
+    public ManagerContracts(List < UserApiEntity > userApiEntitys) {
         initDBContract(userApiEntitys);
     }
     
-    public ManagerContractXmlMySql(){
+    public ManagerContracts(){
         
     }
     
@@ -46,11 +46,11 @@ public class ManagerContractXmlMySql {
                 boolean001 = true;
             }
             // Load XML contract by User
-            ManagerContractXml.getInstance().loadXMLDBG(userApiEntity);
+            ManagerContractsXml.getInstance().loadXMLDBG(userApiEntity);
 
             // Get contract XML
             List < ContractXml > contractXmls =
-             ManagerContractXml.getInstance().getContractXmls(); 
+             ManagerContractsXml.getInstance().getContractXmls(); 
 
             // check that are there contracts
             if ( !contractXmls.isEmpty() ){
@@ -73,11 +73,11 @@ public class ManagerContractXmlMySql {
      */
     public void updateContract(UserApiEntity userApiEntity){
         // Load XML contract by User
-        ManagerContractXml.getInstance().loadXMLDBG(userApiEntity);
+        ManagerContractsXml.getInstance().loadXMLDBG(userApiEntity);
         
         // Get Contract List Xmls 
         List < ContractXml > contractXmls = 
-         ManagerContractXml.getInstance().getContractXmls();
+         ManagerContractsXml.getInstance().getContractXmls();
         
         for (ContractXml contractXml : contractXmls) {
            

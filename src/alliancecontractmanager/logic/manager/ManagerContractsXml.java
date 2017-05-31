@@ -18,8 +18,8 @@ import javax.xml.bind.JAXB;
  *
  * @author lele
  */
-public class ManagerContractXml {
-    private static ManagerContractXml instance = null;
+public class ManagerContractsXml {
+    private static ManagerContractsXml instance = null;
     private String urlStr = null;
     private URL url = null;
     private EveApi eveApi = null;
@@ -27,11 +27,11 @@ public class ManagerContractXml {
     
     /**
      * Singleton
-     * @return ManagerContractXml
+     * @return ManagerContractsXml
      */
-    public static ManagerContractXml getInstance(){
+    public static ManagerContractsXml getInstance(){
         if ( instance == null ){
-            instance = new ManagerContractXml();
+            instance = new ManagerContractsXml();
         }
         return instance;
     }
@@ -72,7 +72,7 @@ public class ManagerContractXml {
         }        
     }
 
-    public ManagerContractXml() {
+    public ManagerContractsXml() {
 //        try {
 //
 ////            Lele
@@ -88,7 +88,7 @@ public class ManagerContractXml {
 ////            setEveApi(JAXB.unmarshal(fileUrl, EveApi.class));
 //            setContractXmls(eveApi.getResult().getContractXmls());
 //        } catch (Exception e) {
-//            System.out.println("ManagerContractXml ManagerContractXml");
+//            System.out.println("ManagerContractsXml ManagerContractsXml");
 //            e.printStackTrace();
 //        }
 

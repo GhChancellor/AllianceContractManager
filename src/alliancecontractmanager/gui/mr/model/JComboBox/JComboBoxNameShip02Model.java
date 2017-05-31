@@ -31,13 +31,11 @@ public class JComboBoxNameShip02Model extends JComboBoxGenericModel {
     }
 
     public void init() {
-        UserApiEntity userApiEntity = ManagerLoginSql.getInstance().getUserApiEntities().get(0);
-
-        ContractEntity contractEntity = new ContractEntity();
-        contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
+        String statusContract = StatusEnum.COMPLETED.getStatus();
+        long userID = ManagerLoginSql.getInstance().getUserApiEntities().get(0).getId();
         
         List< ContractEntity> contractEntitys = 
-         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userApiEntity, contractEntity);
+         ManagerSQLMicrimsDB.getInstance().getUserContractsByStatus(userID, statusContract);
 
          if ( contractEntitys != null )   {
             addElements(contractEntitys,1);

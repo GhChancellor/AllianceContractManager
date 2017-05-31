@@ -9,7 +9,7 @@ import alliancecontractmanager.db.controllers.ContractEntityJpaController;
 import alliancecontractmanager.db.entities.ContractEntity;
 import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.logic.enumname.StatusEnum;
-import alliancecontractmanager.logic.manager.ManagerContractXml;
+import alliancecontractmanager.logic.manager.ManagerContractsXml;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import alliancecontractmanager.logic.xml.ContractXml;
 import java.text.SimpleDateFormat;
@@ -45,6 +45,7 @@ public class PseudoAlgoritmo {
     }
 
     public void update(UserApiEntity user) {
+        System.out.println("");
         List<ContractXml> loadContractFromXML = this.loadContractFromXML(); //2.0  OK
 
         this.checkContracts(loadContractFromXML); //2.1 OK
@@ -160,8 +161,8 @@ public class PseudoAlgoritmo {
      */
     public List<ContractXml> loadContractFromXML() {
         List<ContractXml> result = null;
-        ManagerContractXml.getInstance().loadXML();
-        result = ManagerContractXml.getInstance().getContractXmls();
+        ManagerContractsXml.getInstance().loadXML();
+        result = ManagerContractsXml.getInstance().getContractXmls();
         return result;
     }
 
@@ -185,21 +186,25 @@ public class PseudoAlgoritmo {
         List<ContractEntity> deletedContract = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
 
         for (ContractEntity dbContract : dbContracts) {
-            if (dbContract.getDateExpiredFormatted().after(dateNow)) {
+            if (dbContract.getDateExpiredUnformatted().after(dateNow)) {
                 fixExpiredContract(dbContract); //sono i contratti sul DB che vengono trovati SCADUTI, perché hanno data di scadenza > oggi
                 continue;
             }
+            
             boolean trovato = false;
 
+            // ??? su quale base decidi che è cancellato?           
             for (ContractXml xmlContract : xmlContracts) {
                 if (dbContract.getContractID().equals(xmlContract.getContractID())) {
                     trovato = true;
                     break;
                 }
             }
+            
             if (!trovato) {
                 deletedContract.add(dbContract);
             }
+            
             this.setContractAsCanceled(dbContract, true);
         }
 

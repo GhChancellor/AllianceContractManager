@@ -54,13 +54,9 @@ public class ManagerSQLMicrimsDB {
 
     
     /**
-     * Update contract
-     * Chance status from outstanding to completed
-     * Update field sell price
-     * @param contractEntity
-     * @param value
-     * @param id 
-     */    
+     * Update contract ( change status, price.... )
+     * @param ContractEntity contractEntity 
+     */
     public void updateContract(ContractEntity contractEntity){
         try {
             contractEntityJpaController.edit(contractEntity);
@@ -69,7 +65,11 @@ public class ManagerSQLMicrimsDB {
         }
     }
     
-   public void createContract(ContractEntity contractEntity){
+    /**
+     * Create Contract
+     * @param ContractEntity contractEntity 
+     */
+    public void createContract(ContractEntity contractEntity){
         try {
             contractEntityJpaController.create(contractEntity);
         } catch (Exception ex) {
@@ -77,156 +77,80 @@ public class ManagerSQLMicrimsDB {
         }
     }
    
-   public void deleteContract(ContractEntity contractEntity){
+    /**
+     * Write Contract In DB
+     * @param contractEntity 
+     */    
+    public void addContract(UserApiEntity userApiEntity){
+        List < ContractEntity > contractEntitys = userApiEntity.getAllContractEntitys();
+        
+        try {
+            for (ContractEntity contractEntity : contractEntitys) {
+                contractEntity.setUserEntityId(userApiEntity.getId());
+                contractEntityJpaController.create(contractEntity);
+                userKeyIDJpaController.edit(userApiEntity);
+            }            
+        } catch (Exception e) {
+            System.out.println("ManagerMicrimsDB addContractDBGLUCA");
+            e.printStackTrace();
+        }        
+    }    
+    
+    /**
+     * DBG NON va bene, i contratti sono collegati a un utente
+     * Delete Contract
+     * @param ContractEntity contractEntity 
+     */
+    public void deleteContract(ContractEntity contractEntity){
         try {
             contractEntityJpaController.destroy(contractEntity.getId());
         } catch (Exception ex) {
             Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
-   public void updateUser(UserApiEntity user){
+    
+    /**
+     * Delete a contract
+     * @param value
+     * @param id 
+     */
+    public void deleteContract(UserApiEntity apiEntity, ContractEntity contractEntity){  
+        unlinkContract(apiEntity, contractEntity);
+        
+        try {
+            Long value = contractEntity.getId();
+            contractEntityJpaController.destroy(value);
+        } catch (NonexistentEntityException e) {
+            e.printStackTrace();
+        }       
+    }
+    
+    /**
+     * Unlink contract from user
+     * @param apiEntity
+     * @param contractEntity 
+     */
+    private void unlinkContract( UserApiEntity apiEntity, ContractEntity contractEntity ){
+        boolean removed = apiEntity.getAllContractEntitys().remove(contractEntity);
+        if ( removed ){
+            try {
+                userKeyIDJpaController.edit(apiEntity);
+            } catch (Exception ex) {
+                Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }    
+
+    /**
+     * Update User
+     * @param UserApiEntity user 
+     */
+    public void updateUser(UserApiEntity user){
         try {
             userKeyIDJpaController.edit(user);
         } catch (Exception ex) {
             Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-//    /**
-//     * Get Query DB
-//     * @param value
-//     * @param contractEntity
-//     * @param entityManagerEM
-//     * @return Query
-//     */
-//    private Query getQueryDB(ContractEntity contractEntity, EntityManager entityManagerEM){
-//
-//        // check contract.getPriceSell and contractEntity.getPriceSell are differnt       
-//        // DBG fa cagare
-//        if ( contractEntity.getTempQualcosaDBG() == 1 ){
-//            Query query = updatePriceSell(contractEntity, entityManagerEM);
-//            contractEntity.setTempQualcosaDBG(0);
-//            return query;
-//        }
-//        
-//       // check and update status from outstanding to completed
-//        if ( contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus() )){
-//            // Change value from outstanding to completed
-//            Query query = updateStatusContract(contractEntity, entityManagerEM);
-//            return query;
-//        }
-//        
-//        // update status to expired
-//        if ( contractEntity.getStatusContract().equals(StatusEnum.EXPIRED.getStatus())){
-//            Query query = updateStatusContractRemoveID(contractEntity, entityManagerEM);
-//            return query;             
-//        }
-//        
-//        return null;
-//    }
-
-        /**
-//     * Change value sell price
-//     * @param value
-//     * @param id
-//     * @param entityManagerEM
-//     * @return Query
-//     */
-//    private Query updatePriceSell(ContractEntity contractEntity, EntityManager entityManagerEM){
-//        Long id = contractEntity.getId();
-//        String value = contractEntity.getPriceBuyUnformatted();
-//        
-//        Query query = entityManagerEM.createQuery
-//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.priceBuy = '"
-//        + value + "' WHERE CONTRACTENTITY.id = :id" );
-//        return query;        
-//    }
-//    
-    /**
-     * DGB DateCompleted non viene inserito nel campo
-     * Change value from outstanding to completed
-     * @param value
-     * @param id
-     * @param entityManagerEM
-     * @return Query
-     */
-//    private Query updateStatusContract(ContractEntity contractEntity, EntityManager entityManagerEM){
-//        Long id = contractEntity.getId();
-//        String statusContract = contractEntity.getStatusContract();
-//        Date dateCompleted = contractEntity.getDateCompletedUnformatted();
-//        // :id
-//        
-//        Query query = entityManagerEM.createQuery
-//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= :" + dateCompleted + " , "
-//       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
-//        
-//        
-////        Query query = entityManagerEM.createQuery
-////        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= '" + dateCompleted + "' , "
-////       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
-//        
-////        Query query = entityManagerEM.createQuery
-////        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.statusContract = '"
-////        + statusContract  + "'  WHERE CONTRACTENTITY.id = :id  "  );
-//        
-//        return query;
-//    }
-
-    /**
-     * THIS IS CRIME AGAINST HUMANITY!!!!!!!
-     * 
-     * Quando un contrattato in outstading scade il contractID viene recilato per
-     * uno nuovo contratto, mentre quello vecchio viene perso.
-     * Cancello contractID proveniente da Eve ma l'oggetto non viene perso grazie
-     * l'ID di mysql che resta in archivio. Il suo status passa da "Oustanding" a "Expired"
-     * @param contractEntity
-     * @param entityManagerEM
-     * @return Query
-     */
-//    private Query updateStatusContractRemoveID(ContractEntity contractEntity, 
-//     EntityManager entityManagerEM){
-//        Long id = contractEntity.getId();
-//        String statusContract = contractEntity.getStatusContract();
-//        
-//        Query query = entityManagerEM.createQuery(
-//         "UPDATE ContractEntity contractEntity SET CONTRACTENTITY.statusContract ='" + statusContract 
-//         + "', CONTRACTENTITY.contractID='' WHERE CONTRACTENTITY.id = :id");
-//        return query;
-//    }    
-    
-    
-    // ------------------------------------------------------------------------------------------------
-    
-    /**
-     * DBG NON MI PIACE
-     * Lo voglio riportare direttamente in oggetto tralasciando doppioni
-     * Get all contracts avoid these with the same name
-     * @return List < ContractEntity >
-     */
-    public List < ContractEntity > getContractsTitleAvoidDuplicate(){
-        
-        List<ContractEntity> contracts = contractEntityJpaController.findContractEntityEntities();
-        return contracts;
-//        try {
-//            
-//            Query query =  entityManagerEM.createNamedQuery("getContractsTitleAvoidDuplicate");
-//            List < String > titles = query.getResultList();
-//
-//            List < ContractEntity > contractEntitys = new ArrayList<>();
-//            
-//            for (String title : titles) {
-//                ContractEntity contractEntity = new ContractEntity();
-//                contractEntity.setTitle(title);
-//                contractEntitys.add(contractEntity);
-//            }
-//
-//            return contractEntitys;
-//        } catch (Exception e) {
-//            System.out.println("ManagerMicrimDB getContractsTitleAvoidDuplicate");
-//            e.printStackTrace();
-//            return null ;
-//        }
     }
     
     /**
@@ -245,41 +169,23 @@ public class ManagerSQLMicrimsDB {
             e.printStackTrace();
             return null ;
         }
-    }
+    }    
     
-//    /**
-//     * Get all contract with this parameter User
-//     * @return List < ContractEntity >
-//     */
-//    public List < ContractEntity > getUserContracts(UserApiEntity userApiEntity){
-//        
-//        userApiEntity.get
-//        try {
-//            TypedQuery < ContractEntity > getUserContractsTQ =
-//             entityManagerEM.createNamedQuery("getUserContracts", ContractEntity.class);
-//            
-//            getUserContractsTQ.setParameter("userEntityId", userApiEntity.getId());
-//            
-//            return getUserContractsTQ.getResultList();
-//        } catch (Exception e) {
-//            System.out.println("ManagerMicrimDB getUserContracts");
-//            e.printStackTrace();
-//            return null ;
-//        }
-//    }    
+    
+    // ------------------------------------------------------------------------------------------------
     
     /**
      * Get all contract with this parameters Status and User
      * @return List < ContractEntity >
      */
-    public List < ContractEntity > getUserContractsByStatus(UserApiEntity userApiEntity, ContractEntity contractEntity){
+    public List < ContractEntity > getUserContractsByStatus(long userId, String contractStauts){
         
         try {
             TypedQuery < ContractEntity > getUserContractsTQ =
              entityManagerEM.createNamedQuery("getUserContractsByStatus", ContractEntity.class);
             
-            getUserContractsTQ.setParameter("userEntityId", userApiEntity.getId());
-            getUserContractsTQ.setParameter("statusContract", contractEntity.getStatusContract());
+            getUserContractsTQ.setParameter("userEntityId", userId);
+            getUserContractsTQ.setParameter("statusContract", contractStauts);
             
             return getUserContractsTQ.getResultList();
         } catch (Exception e) {
@@ -293,15 +199,15 @@ public class ManagerSQLMicrimsDB {
      * Get User all Contracts by status and Date
      * @return List < ContractEntity >
      */
-    public List < ContractEntity > getUserContractsByStatusDate(UserApiEntity userApiEntity, ContractEntity contractEntity){
+    public List < ContractEntity > getUserContractsByStatusDate(Long userId, String statusContract, Date dateIssuedUnformatted ){
         
         try {
             TypedQuery < ContractEntity > getUserContractsTQ =
              entityManagerEM.createNamedQuery("getUserContractsByStatusDate", ContractEntity.class);
             
-            getUserContractsTQ.setParameter("userEntityId", userApiEntity.getId());
-            getUserContractsTQ.setParameter("statusContract", contractEntity.getStatusContract());
-            getUserContractsTQ.setParameter("dateIssued", contractEntity.getDateIssuedUnformatted() );
+            getUserContractsTQ.setParameter("userEntityId", userId );
+            getUserContractsTQ.setParameter("statusContract", statusContract);
+            getUserContractsTQ.setParameter("dateIssued", dateIssuedUnformatted);
             
             return getUserContractsTQ.getResultList();
         } catch (Exception e) {
@@ -346,38 +252,6 @@ public class ManagerSQLMicrimsDB {
     }     
       
     /**
-     * Delete a contract
-     * @param value
-     * @param id 
-     */
-    public void deleteContract(UserApiEntity apiEntity, ContractEntity contractEntity){  
-        unlinkContract(apiEntity, contractEntity);
-        
-        try {
-            Long value = contractEntity.getId();
-            contractEntityJpaController.destroy(value);
-        } catch (NonexistentEntityException e) {
-            e.printStackTrace();
-        }       
-    }
-    
-    /**
-     * Unlink contract from user
-     * @param apiEntity
-     * @param contractEntity 
-     */
-    private void unlinkContract( UserApiEntity apiEntity, ContractEntity contractEntity ){
-        boolean removed = apiEntity.getAllContractEntitys().remove(contractEntity);
-        if ( removed ){
-            try {
-                userKeyIDJpaController.edit(apiEntity);
-            } catch (Exception ex) {
-                Logger.getLogger(ManagerSQLMicrimsDB.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    /**
      * DBG unused
      * get Contract By ID
      * @param id
@@ -385,25 +259,6 @@ public class ManagerSQLMicrimsDB {
      */
     public ContractEntity getContractByID( ContractEntity contractEntity) {
         return contractEntityJpaController.findContractEntity(contractEntity.getId());
-    }
-    
-    /**
-     * Write Contract In DB
-     * @param contractEntity 
-     */    
-    public void addContract(UserApiEntity userApiEntity){
-        List < ContractEntity > contractEntitys = userApiEntity.getAllContractEntitys();
-        
-        try {
-            for (ContractEntity contractEntity : contractEntitys) {
-                contractEntity.setUserEntityId(userApiEntity.getId());
-                contractEntityJpaController.create(contractEntity);
-                userKeyIDJpaController.edit(userApiEntity);
-            }            
-        } catch (Exception e) {
-            System.out.println("ManagerMicrimsDB addContractDBGLUCA");
-            e.printStackTrace();
-        }        
     }
     
     /**
@@ -575,5 +430,160 @@ public class ManagerSQLMicrimsDB {
 //            return null;
 //        }
 //    }     
+
+    /**
+     * DBG NON MI PIACE
+     * Lo voglio riportare direttamente in oggetto tralasciando doppioni
+     * Get all contracts avoid these with the same name
+     * @return List < ContractEntity >
+     */
+    public List < ContractEntity > getContractsTitleAvoidDuplicate(){
+        
+        List<ContractEntity> contracts = contractEntityJpaController.findContractEntityEntities();
+        return contracts;
+//        try {
+//            
+//            Query query =  entityManagerEM.createNamedQuery("getContractsTitleAvoidDuplicate");
+//            List < String > titles = query.getResultList();
+//
+//            List < ContractEntity > contractEntitys = new ArrayList<>();
+//            
+//            for (String title : titles) {
+//                ContractEntity contractEntity = new ContractEntity();
+//                contractEntity.setTitle(title);
+//                contractEntitys.add(contractEntity);
+//            }
+//
+//            return contractEntitys;
+//        } catch (Exception e) {
+//            System.out.println("ManagerMicrimDB getContractsTitleAvoidDuplicate");
+//            e.printStackTrace();
+//            return null ;
+//        }
+    }   
+    
+//    /**
+//     * Get all contract with this parameter User
+//     * @return List < ContractEntity >
+//     */
+//    public List < ContractEntity > getUserContracts(UserApiEntity userApiEntity){
+//        
+//        userApiEntity.get
+//        try {
+//            TypedQuery < ContractEntity > getUserContractsTQ =
+//             entityManagerEM.createNamedQuery("getUserContracts", ContractEntity.class);
+//            
+//            getUserContractsTQ.setParameter("userEntityId", userApiEntity.getId());
+//            
+//            return getUserContractsTQ.getResultList();
+//        } catch (Exception e) {
+//            System.out.println("ManagerMicrimDB getUserContracts");
+//            e.printStackTrace();
+//            return null ;
+//        }
+//    }   
+    
+//    /**
+//     * Get Query DB
+//     * @param value
+//     * @param contractEntity
+//     * @param entityManagerEM
+//     * @return Query
+//     */
+//    private Query getQueryDB(ContractEntity contractEntity, EntityManager entityManagerEM){
+//
+//        // check contract.getPriceSell and contractEntity.getPriceSell are differnt       
+//        // DBG fa cagare
+//        if ( contractEntity.getTempQualcosaDBG() == 1 ){
+//            Query query = updatePriceSell(contractEntity, entityManagerEM);
+//            contractEntity.setTempQualcosaDBG(0);
+//            return query;
+//        }
+//        
+//       // check and update status from outstanding to completed
+//        if ( contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus() )){
+//            // Change value from outstanding to completed
+//            Query query = updateStatusContract(contractEntity, entityManagerEM);
+//            return query;
+//        }
+//        
+//        // update status to expired
+//        if ( contractEntity.getStatusContract().equals(StatusEnum.EXPIRED.getStatus())){
+//            Query query = updateStatusContractRemoveID(contractEntity, entityManagerEM);
+//            return query;             
+//        }
+//        
+//        return null;
+//    }
+
+        /**
+//     * Change value sell price
+//     * @param value
+//     * @param id
+//     * @param entityManagerEM
+//     * @return Query
+//     */
+//    private Query updatePriceSell(ContractEntity contractEntity, EntityManager entityManagerEM){
+//        Long id = contractEntity.getId();
+//        String value = contractEntity.getPriceBuyUnformatted();
+//        
+//        Query query = entityManagerEM.createQuery
+//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.priceBuy = '"
+//        + value + "' WHERE CONTRACTENTITY.id = :id" );
+//        return query;        
+//    }
+//    
+    /**
+     * DGB DateCompleted non viene inserito nel campo
+     * Change value from outstanding to completed
+     * @param value
+     * @param id
+     * @param entityManagerEM
+     * @return Query
+     */
+//    private Query updateStatusContract(ContractEntity contractEntity, EntityManager entityManagerEM){
+//        Long id = contractEntity.getId();
+//        String statusContract = contractEntity.getStatusContract();
+//        Date dateCompleted = contractEntity.getDateCompletedUnformatted();
+//        // :id
+//        
+//        Query query = entityManagerEM.createQuery
+//        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= :" + dateCompleted + " , "
+//       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
+//        
+//        
+////        Query query = entityManagerEM.createQuery
+////        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.dateCompleted= '" + dateCompleted + "' , "
+////       + "CONTRACTENTITY.statusContract = '" +  statusContract + "' WHERE CONTRACTENTITY.id = :id  ");
+//        
+////        Query query = entityManagerEM.createQuery
+////        ("UPDATE ContractEntity contractEntity set CONTRACTENTITY.statusContract = '"
+////        + statusContract  + "'  WHERE CONTRACTENTITY.id = :id  "  );
+//        
+//        return query;
+//    }
+
+    /**
+     * THIS IS CRIME AGAINST HUMANITY!!!!!!!
+     * 
+     * Quando un contrattato in outstading scade il contractID viene recilato per
+     * uno nuovo contratto, mentre quello vecchio viene perso.
+     * Cancello contractID proveniente da Eve ma l'oggetto non viene perso grazie
+     * l'ID di mysql che resta in archivio. Il suo status passa da "Oustanding" a "Expired"
+     * @param contractEntity
+     * @param entityManagerEM
+     * @return Query
+     */
+//    private Query updateStatusContractRemoveID(ContractEntity contractEntity, 
+//     EntityManager entityManagerEM){
+//        Long id = contractEntity.getId();
+//        String statusContract = contractEntity.getStatusContract();
+//        
+//        Query query = entityManagerEM.createQuery(
+//         "UPDATE ContractEntity contractEntity SET CONTRACTENTITY.statusContract ='" + statusContract 
+//         + "', CONTRACTENTITY.contractID='' WHERE CONTRACTENTITY.id = :id");
+//        return query;
+//    }    
+    
     
 }

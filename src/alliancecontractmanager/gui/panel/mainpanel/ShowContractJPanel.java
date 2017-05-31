@@ -10,7 +10,7 @@ import alliancecontractmanager.db.entities.UserApiEntity;
 import alliancecontractmanager.gui.logicgui.event.Listener;
 import alliancecontractmanager.logic.UpdateContractProva.PseudoAlgoritmo;
 import alliancecontractmanager.logic.enumname.StatusEnum;
-import alliancecontractmanager.logic.manager.ManagerContractXmlMySql;
+import alliancecontractmanager.logic.manager.ManagerContracts;
 import alliancecontractmanager.logic.manager.ManagerLoginSql;
 import alliancecontractmanager.logic.manager.ManagerMicrimDB.ManagerSQLMicrimsDB;
 import java.beans.Beans;
@@ -385,8 +385,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
         List< UserApiEntity> userApiEntitys
                 = ManagerLoginSql.getInstance().getUserApiEntities();
 
-        ManagerContractXmlMySql managerContractXmlMySql
-                = new ManagerContractXmlMySql(userApiEntitys);
+        ManagerContracts managerContractXmlMySql
+                = new ManagerContracts(userApiEntitys);
 
     }//GEN-LAST:event_jButtonUpdateContractMouseClicked
 
