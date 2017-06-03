@@ -183,7 +183,7 @@ public class PseudoAlgoritmo {
         List<ContractEntity> dbContracts = contractController.findContractEntityEntities();
 
         Date dateNow = new Date();
-        List<ContractEntity> deletedContract = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
+        List<ContractEntity> deletedContracts = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
 
         for (ContractEntity dbContract : dbContracts) {
             if (dbContract.getDateExpiredUnformatted().after(dateNow)) {
@@ -202,10 +202,12 @@ public class PseudoAlgoritmo {
             }
             
             if (!trovato) {
-                deletedContract.add(dbContract);
+                deletedContracts.add(dbContract);
             }
-            
-            this.setContractAsCanceled(dbContract, true);
+        }
+        
+        for (ContractEntity contractEntity : deletedContracts) {
+            this.setContractAsCanceled(contractEntity);
         }
 
         //  2.1.1)se un NOSTRO contratto non viene trovato -> quel contratto è stato cancellato
@@ -218,12 +220,12 @@ public class PseudoAlgoritmo {
      * @param contract
      * @param canceled
      */
-    public void setContractAsCanceled(ContractEntity contract, boolean canceled) {
-        if (canceled) {
+    public void setContractAsCanceled(ContractEntity contract) {
+//        if (canceled) {
             //contract.setContractID("");
             contract.setStatusContract(StatusEnum.DELETED.getStatus());
             ManagerSQLMicrimsDB.getInstance().updateContract(contract);
-        }
+//        }
     }
 
     private Date parseStringToDate(String dateString) {
