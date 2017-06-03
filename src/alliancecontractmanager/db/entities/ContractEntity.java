@@ -146,9 +146,7 @@ public class ContractEntity implements Serializable {
     public void setUserEntityId(Long userEntityId) {
         this.userEntityId = userEntityId;
     }
-    
-    
-    
+
     public int getTempQualcosaDBG() {
         return tempQualcosaDBG;
     }
@@ -156,8 +154,6 @@ public class ContractEntity implements Serializable {
     public void setTempQualcosaDBG(int tempQualcosaDBG) {
         this.tempQualcosaDBG = tempQualcosaDBG;
     }
-
-
     
     /**
      * Unused
