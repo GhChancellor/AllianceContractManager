@@ -50,9 +50,9 @@ public class MasterManager {
         showContractJFrame.setVisible(true);
         showContractJFrame.setLocationRelativeTo(showContractJFrame);
         
-        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
-        showReportShipJFrame.setVisible(true);
-        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
+//        ShowReportShipJFrame showReportShipJFrame = new ShowReportShipJFrame();
+//        showReportShipJFrame.setVisible(true);
+//        showReportShipJFrame.setLocationRelativeTo(showReportShipJFrame);
 //        
 //        ShowRemainShipsJFrame showRemainShipsJFrame = new ShowRemainShipsJFrame();
 //        showRemainShipsJFrame.setVisible(true);

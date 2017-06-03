@@ -24,8 +24,7 @@ import javax.persistence.Persistence;
  */
 public class PseudoAlgoritmo {
 
-    
-    
+    private boolean firstUpdate = true;
     private ContractEntityJpaController contractController = new ContractEntityJpaController(Persistence.createEntityManagerFactory("AllianceContractManagerPU"));
 
     /*
@@ -46,22 +45,23 @@ public class PseudoAlgoritmo {
 
     public void update(UserApiEntity user) {
         System.out.println("");
-        List<ContractXml> loadContractFromXML = this.loadContractFromXML(); //2.0  OK
-
-        this.checkContracts(loadContractFromXML); //2.1 OK
 
         Date nowMinus15 = new Date(new Date().getTime() - (1000l * 60l * 15l));
+
+        List<ContractXml> loadContractFromXML = this.loadContractFromXML(user); //2.0  OK
+
+        List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15,firstUpdate); //7 2.3)  OK
+
+        for (ContractXml cCompleted : allContractsCompleted) {
+            this.fixClosedContract(cCompleted);  // OK
+        }
+
+        this.checkContracts(loadContractFromXML, user.getId()); //2.1 OK
 
         List<ContractXml> allContractsAfter = this.getAllContractsIssued(loadContractFromXML, nowMinus15); //2.2)  OK
 
         for (ContractXml contractXml : allContractsAfter) {
             this.setContractAsNEW(contractXml, user);            // 2.2.1)  OK
-        }
-
-        List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15); //7 2.3)  OK
-
-        for (ContractXml cCompleted : allContractsCompleted) {
-            this.fixClosedContract(cCompleted);  // OK
         }
 
     }
@@ -73,12 +73,12 @@ public class PseudoAlgoritmo {
      * @param xmlContract
      */
     public void fixClosedContract(ContractXml xmlContract) {
-        
+
         ContractEntity contractEntity = ManagerSQLMicrimsDB.getInstance().getContractByEveId(xmlContract.getContractID());
-        if(contractEntity!=null){
+        if (contractEntity != null) {
             contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
             ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);
-            System.out.println("Contractto marcato come COMPLETED: "+xmlContract.getContractID());
+            System.out.println("Contractto marcato come COMPLETED: " + xmlContract.getContractID());
         }
         //TODO
 //            if(xmlContract.getStatus())
@@ -92,12 +92,19 @@ public class PseudoAlgoritmo {
      * @param date
      * @return
      */
-    public List<ContractXml> getAllContractsCompleted(List<ContractXml> allContracts, Date date) {
+    public List<ContractXml> getAllContractsCompleted(List<ContractXml> allContracts, Date date, boolean firstUpdate) {
         List<ContractXml> result = new ArrayList<>();
         for (ContractXml ccc : allContracts) {
-            Date dateIssued = parseStringToDate(ccc.getDateCompleted());
-            if (dateIssued.after(date)) {
-                result.add(ccc);
+            if (ccc.getStatus().equals(StatusEnum.COMPLETED.getStatus())) {
+                System.out.println("sto valutando: " + ccc.getTitle() + " ID -> " + ccc.getContractID());
+                if (!firstUpdate) {
+                    Date dateIssued = parseStringToDate(ccc.getDateCompleted());
+                    if (dateIssued.after(date)) {
+                        result.add(ccc);
+                    }
+                }else{
+                    result.add(ccc);
+                }
             }
         }
         return result;
@@ -144,12 +151,11 @@ public class PseudoAlgoritmo {
         if (!contractXml.getDateCompleted().equals("")) {
             contractEntity.setDateCompleted(contractXml.getDateCompleted());
         }
-        
+
         contractEntity.setUserEntityId(user.getId());
-        
-        
+
         ManagerSQLMicrimsDB.getInstance().createContract(contractEntity);
-        
+
         user.addContractEntitys(contractEntity);
         ManagerSQLMicrimsDB.getInstance().updateUser(user);
     }
@@ -162,6 +168,13 @@ public class PseudoAlgoritmo {
     public List<ContractXml> loadContractFromXML() {
         List<ContractXml> result = null;
         ManagerContractsXml.getInstance().loadXML();
+        result = ManagerContractsXml.getInstance().getContractXmls();
+        return result;
+    }
+
+    public List<ContractXml> loadContractFromXML(UserApiEntity user) {
+        List<ContractXml> result = null;
+        ManagerContractsXml.getInstance().loadXML(user);
         result = ManagerContractsXml.getInstance().getContractXmls();
         return result;
     }
@@ -179,18 +192,22 @@ public class PseudoAlgoritmo {
      *
      * @param xmlContracts
      */
-    public void checkContracts(List<ContractXml> xmlContracts) {
-        List<ContractEntity> dbContracts = contractController.findContractEntityEntities();
+    public void checkContracts(List<ContractXml> xmlContracts, Long userId) {
 
+        //List<ContractEntity> dbContracts = contractController.findContractEntityEntities();
+        List<ContractEntity> dbContracts = ManagerSQLMicrimsDB.getInstance().getContractsByUser(userId);
         Date dateNow = new Date();
         List<ContractEntity> deletedContracts = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
 
         for (ContractEntity dbContract : dbContracts) {
-            if (dbContract.getDateExpiredUnformatted().after(dateNow)) {
+            if (dbContract.getStatusContract().equals(StatusEnum.COMPLETED.getStatus())) {
+                continue;
+            }
+            if (dbContract.getDateExpiredUnformatted().before(dateNow)) {
                 fixExpiredContract(dbContract); //sono i contratti sul DB che vengono trovati SCADUTI, perché hanno data di scadenza > oggi
                 continue;
             }
-            
+
             boolean trovato = false;
 
             // ??? su quale base decidi che è cancellato?           
@@ -200,12 +217,12 @@ public class PseudoAlgoritmo {
                     break;
                 }
             }
-            
+
             if (!trovato) {
                 deletedContracts.add(dbContract);
             }
         }
-        
+
         for (ContractEntity contractEntity : deletedContracts) {
             this.setContractAsCanceled(contractEntity);
         }
@@ -222,9 +239,9 @@ public class PseudoAlgoritmo {
      */
     public void setContractAsCanceled(ContractEntity contract) {
 //        if (canceled) {
-            //contract.setContractID("");
-            contract.setStatusContract(StatusEnum.DELETED.getStatus());
-            ManagerSQLMicrimsDB.getInstance().updateContract(contract);
+        //contract.setContractID("");
+        contract.setStatusContract(StatusEnum.DELETED.getStatus());
+        ManagerSQLMicrimsDB.getInstance().updateContract(contract);
 //        }
     }
 

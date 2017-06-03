@@ -71,6 +71,27 @@ public class ManagerContractsXml {
             e.printStackTrace();
         }        
     }
+    
+        public void loadXML(UserApiEntity user){
+        try {
+
+//            Lele
+//            setUrlStr("");
+//            url = new URL(urlStr);
+//            eveApi = JAXB.unmarshal(url, EveApi.class);
+            
+//       accesso via file     
+            setUrlStr ("./"+user.getNameCharacter()+".xml");            
+            File fileUrl = new File(urlStr);
+            eveApi = JAXB.unmarshal(fileUrl, EveApi.class);
+            
+//            setEveApi(JAXB.unmarshal(fileUrl, EveApi.class));
+            setContractXmls(eveApi.getResult().getContractXmls());
+        } catch (Exception e) {
+            System.out.println("ManagerContractXml ManagerContractXml");
+            e.printStackTrace();
+        }        
+    }
 
     public ManagerContractsXml() {
 //        try {

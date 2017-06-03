@@ -405,7 +405,30 @@ public class ManagerSQLMicrimsDB {
             e.printStackTrace();
             return null;
         }        
-    }         
+    }        
+    
+        /**
+     * Get all contract with this parameter User
+     * @return List < ContractEntity >
+     */
+    public List < ContractEntity > getContractsByUser(Long userId){
+        
+//        userApiEntity.get
+        try {
+            TypedQuery < ContractEntity > getUserContractsTQ =
+             entityManagerEM.createNamedQuery("getUserContracts", ContractEntity.class);
+            
+            getUserContractsTQ.setParameter("userEntityId", userId);
+            
+            return getUserContractsTQ.getResultList();
+        } catch (Exception e) {
+            System.out.println("ManagerMicrimDB getUserContracts");
+            e.printStackTrace();
+            return null ;
+        }
+    }   
+    
+    
     
     // da sostituire con la versione con user
     
@@ -462,27 +485,7 @@ public class ManagerSQLMicrimsDB {
 //        }
     }   
     
-//    /**
-//     * Get all contract with this parameter User
-//     * @return List < ContractEntity >
-//     */
-//    public List < ContractEntity > getUserContracts(UserApiEntity userApiEntity){
-//        
-//        userApiEntity.get
-//        try {
-//            TypedQuery < ContractEntity > getUserContractsTQ =
-//             entityManagerEM.createNamedQuery("getUserContracts", ContractEntity.class);
-//            
-//            getUserContractsTQ.setParameter("userEntityId", userApiEntity.getId());
-//            
-//            return getUserContractsTQ.getResultList();
-//        } catch (Exception e) {
-//            System.out.println("ManagerMicrimDB getUserContracts");
-//            e.printStackTrace();
-//            return null ;
-//        }
-//    }   
-    
+
 //    /**
 //     * Get Query DB
 //     * @param value
