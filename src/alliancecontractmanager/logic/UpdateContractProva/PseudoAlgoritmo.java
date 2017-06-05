@@ -43,7 +43,7 @@ public class PseudoAlgoritmo {
 
     }
 
-    public void update(UserApiEntity user) {
+    public void updateContract(UserApiEntity user) {
         System.out.println("");
 
         Date nowMinus15 = new Date(new Date().getTime() - (1000l * 60l * 15l));
@@ -52,92 +52,79 @@ public class PseudoAlgoritmo {
 
         List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15,firstUpdate); //7 2.3)  OK
 
-        for (ContractXml cCompleted : allContractsCompleted) {
-            this.fixClosedContract(cCompleted);  // OK
+        for (ContractXml contractCompleted : allContractsCompleted) {
+            this.fixClosedContract(contractCompleted);  // OK
         }
 
         this.checkContracts(loadContractFromXML, user.getId()); //2.1 OK
 
-        List<ContractXml> allContractsAfter = this.getAllContractsIssued(loadContractFromXML, nowMinus15); //2.2)  OK
+        List<ContractXml> allNewContracts = this.getAllNewContracts(loadContractFromXML, nowMinus15); //2.2)  OK
 
-        for (ContractXml contractXml : allContractsAfter) {
-            this.setContractAsNEW(contractXml, user);            // 2.2.1)  OK
+        for (ContractXml contractXml : allNewContracts) {
+            this.setContractAsNEW(user, contractXml);            // 2.2.1)  OK
         }
 
     }
 
     /**
-     * 2.3.1) i contratti che soddisfano questa condizione sono CONCLUSI e va
-     * aggiornato il DB locale
-     *
-     * @param xmlContract
-     */
-    public void fixClosedContract(ContractXml xmlContract) {
-
-        ContractEntity contractEntity = ManagerSQLMicrimsDB.getInstance().getContractByEveId(xmlContract.getContractID());
-        if (contractEntity != null) {
-            contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
-            ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);
-            System.out.println("Contractto marcato come COMPLETED: " + xmlContract.getContractID());
-        }
-        //TODO
-//            if(xmlContract.getStatus())
-//            xmlContract.setStatus(StatusEnum.COMPLETED.getStatus());
-
-    }
-
-    /**
+     * Get All Contracts Completed
      * 2.3) cercare tra i contratti XML quelli con dateCompleted > NOW-15minuti
-     *
-     * @param date
-     * @return
+     * @param List<ContractXml> allContracts
+     * @param Date date
+     * @param boolean firstUpdate
+     * @return List<ContractXml>
      */
     public List<ContractXml> getAllContractsCompleted(List<ContractXml> allContracts, Date date, boolean firstUpdate) {
-        List<ContractXml> result = new ArrayList<>();
-        for (ContractXml ccc : allContracts) {
-            if (ccc.getStatus().equals(StatusEnum.COMPLETED.getStatus())) {
-                System.out.println("sto valutando: " + ccc.getTitle() + " ID -> " + ccc.getContractID());
+        
+        List<ContractXml> contractXmls = new ArrayList<>();
+        
+        for (ContractXml contractXml : allContracts) {
+            if (contractXml.getStatus().equals(StatusEnum.COMPLETED.getStatus())) {
+                System.out.println("sto valutando: " + contractXml.getTitle() + " ID -> " + contractXml.getContractID());
+                
                 if (!firstUpdate) {
-                    Date dateIssued = parseStringToDate(ccc.getDateCompleted());
+                    Date dateIssued = parseStringToDate(contractXml.getDateCompleted());
                     if (dateIssued.after(date)) {
-                        result.add(ccc);
+                        contractXmls.add(contractXml);
                     }
                 }else{
-                    result.add(ccc);
+                    contractXmls.add(contractXml);
                 }
             }
         }
-        return result;
+        return contractXmls;
     }
 
     /**
+     * Get All New Contracts
      * 2.2) cercare tra i contratti XML quelli con dateIssued > NOW-15minuti
-     *
-     * @param date
-     * @return
+     * @param List<ContractXml> allContracts
+     * @param Date date
+     * @return List<ContractXml>
      */
-    public List<ContractXml> getAllContractsIssued(List<ContractXml> allContracts, Date date) {
+    public List<ContractXml> getAllNewContracts(List<ContractXml> allContracts, Date date) {
 
-        List<ContractXml> result = new ArrayList<>();
+        List<ContractXml> contractXmls = new ArrayList<>();
 
-        for (ContractXml ccc : allContracts) {
+        for (ContractXml contractXml : allContracts) {
 
-            Date dateIssued = parseStringToDate(ccc.getDateIssued());
+            Date dateIssued = parseStringToDate(contractXml.getDateIssued());
 
             if (dateIssued.after(date)) {
-                result.add(ccc);
+                contractXmls.add(contractXml);
             }
         }
-        return result;
+        return contractXmls;
     }
 
     /**
+     * Set Contract As NEW and put in DB
      * 2.2.1) i contratti che soddisfano questa condizione sono NUOVI e vanno
      * inseriti nel DB locale
-     *
-     * @param contract
+     * @param ContractXml contractXml
+     * @param UserApiEntity user 
      */
-    public void setContractAsNEW(ContractXml contractXml, UserApiEntity user) {
+    public void setContractAsNEW(UserApiEntity user, ContractXml contractXml) {
         //li aggiorna nel db
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setDateIssued(contractXml.getDateIssued());
@@ -161,88 +148,124 @@ public class PseudoAlgoritmo {
     }
 
     /**
-     * 2) caricare la NOSTRA lista completa dei contratti
-     *
-     * @return
+     * UNUSED
+     * Load Contract From XML
+     * @return List<ContractXml>
      */
     public List<ContractXml> loadContractFromXML() {
-        List<ContractXml> result = null;
+        List<ContractXml> contractXmls = null;
         ManagerContractsXml.getInstance().loadXML();
-        result = ManagerContractsXml.getInstance().getContractXmls();
-        return result;
+        contractXmls = ManagerContractsXml.getInstance().getContractXmls();
+        return contractXmls;
     }
 
+    /**
+     * Load all Contractd From XML by user
+     * 2) caricare la NOSTRA lista completa dei contratti
+     * @param UserApiEntity user
+     * @return List<ContractXml>
+     */
     public List<ContractXml> loadContractFromXML(UserApiEntity user) {
-        List<ContractXml> result = null;
+        List<ContractXml> contractXmls = new ArrayList<>();
+    
         ManagerContractsXml.getInstance().loadXML(user);
-        result = ManagerContractsXml.getInstance().getContractXmls();
-        return result;
+        contractXmls = ManagerContractsXml.getInstance().getContractXmls();
+        return contractXmls;
     }
 
+    /**
+     * Fix Expired Contract
+     * @param ContractEntity contractEntity 
+     */
     public void fixExpiredContract(ContractEntity contractEntity) {
         System.out.println("contratto scaduto");
+        
         contractEntity.setContractID("");
         contractEntity.setStatusContract(StatusEnum.EXPIRED.getStatus());
         ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);
     }
 
     /**
+     * Fix Closed Contract
+     * 2.3.1) i contratti che soddisfano questa condizione sono CONCLUSI e va
+     * aggiornato il DB locale
+     * @param ContractXml xmlContract
+     */
+    public void fixClosedContract(ContractXml contractXml) {
+
+        ContractEntity contractEntity = ManagerSQLMicrimsDB.getInstance().getContractByEveId(contractXml.getContractID());
+        if (contractEntity != null) {
+            contractEntity.setStatusContract(StatusEnum.COMPLETED.getStatus());
+            ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);
+            System.out.println("Contractto marcato come COMPLETED: " + contractXml.getContractID());
+        }
+        //TODO
+//            if(xmlContract.getStatus())
+//            xmlContract.setStatus(StatusEnum.COMPLETED.getStatus());
+
+    }    
+
+    /**
+     * Fix Deleted Contract
+     * 2.1.1.1) Segno il nostro contratto LOCALE come CANCELLATO
+     * @param ContractEntity contract 
+     */
+    public void fixDeletedContract(ContractEntity contractEntity) {
+//        if (canceled) {
+        //contract.setContractID("");
+        contractEntity.setStatusContract(StatusEnum.DELETED.getStatus());
+        ManagerSQLMicrimsDB.getInstance().updateContract(contractEntity);
+//        }
+    }
+    
+    /**
      * 2.1) cercare tra i contratti xml tutti i nostri contratti NON SCADUTI O
      * CANCELLATI
-     *
-     * @param xmlContracts
+     * 
+     * @param List<ContractXml> xmlContracts xmlContracts
+     * @param Long userId 
      */
-    public void checkContracts(List<ContractXml> xmlContracts, Long userId) {
+    public void checkContracts(List<ContractXml> contractXlms, Long userId) {
 
         //List<ContractEntity> dbContracts = contractController.findContractEntityEntities();
-        List<ContractEntity> dbContracts = ManagerSQLMicrimsDB.getInstance().getContractsByUser(userId);
+        List<ContractEntity> contractEntities = ManagerSQLMicrimsDB.getInstance().getContractsByUser(userId);
+        
         Date dateNow = new Date();
         List<ContractEntity> deletedContracts = new ArrayList<>(); // qui ci salvo tutti i contratti scaduti che vado trovando
 
-        for (ContractEntity dbContract : dbContracts) {
-            if (dbContract.getStatusContract().equals(StatusEnum.COMPLETED.getStatus())) {
+        for (ContractEntity contractEntity : contractEntities) {
+            // Contract is completed?
+            if (contractEntity.getStatusContract().equals(StatusEnum.COMPLETED.getStatus())) {
                 continue;
             }
-            if (dbContract.getDateExpiredUnformatted().before(dateNow)) {
-                fixExpiredContract(dbContract); //sono i contratti sul DB che vengono trovati SCADUTI, perché hanno data di scadenza > oggi
+            
+            // Contract is expired?
+            if (contractEntity.getDateExpiredUnformatted().before(dateNow)) {
+                fixExpiredContract(contractEntity); //sono i contratti sul DB che vengono trovati SCADUTI, perché hanno data di scadenza > oggi
                 continue;
             }
 
-            boolean trovato = false;
+            boolean foundIt = false;
 
-            // ??? su quale base decidi che è cancellato?           
-            for (ContractXml xmlContract : xmlContracts) {
-                if (dbContract.getContractID().equals(xmlContract.getContractID())) {
-                    trovato = true;
+            // non sono sicuro delle meccaniche sulla gestione dei contratti deleted
+            for (ContractXml contractXml : contractXlms) {
+                if (contractEntity.getContractID().equals(contractXml.getContractID())) {
+                    foundIt = true;
                     break;
                 }
             }
 
-            if (!trovato) {
-                deletedContracts.add(dbContract);
+            if (!foundIt) {
+                deletedContracts.add(contractEntity);
             }
         }
 
         for (ContractEntity contractEntity : deletedContracts) {
-            this.setContractAsCanceled(contractEntity);
+            this.fixDeletedContract(contractEntity);
         }
 
         //  2.1.1)se un NOSTRO contratto non viene trovato -> quel contratto è stato cancellato
         // 2.1.1.1) Segno il nostro contratto LOCALE come CANCELLATO
-    }
-
-    /**
-     * 2.1.1.1) Segno il nostro contratto LOCALE come CANCELLATO
-     *
-     * @param contract
-     * @param canceled
-     */
-    public void setContractAsCanceled(ContractEntity contract) {
-//        if (canceled) {
-        //contract.setContractID("");
-        contract.setStatusContract(StatusEnum.DELETED.getStatus());
-        ManagerSQLMicrimsDB.getInstance().updateContract(contract);
-//        }
     }
 
     private Date parseStringToDate(String dateString) {

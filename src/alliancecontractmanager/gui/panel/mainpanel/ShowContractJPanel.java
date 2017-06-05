@@ -402,7 +402,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
               System.out.println("USER SELEZIONATO: "+userApiEntity.getId() + "    NOME: "+userApiEntity.getNameCharacter());
               PseudoAlgoritmo algo = new PseudoAlgoritmo();
               System.out.println("UPDATING...");
-              algo.update(userApiEntity);
+              algo.updateContract(userApiEntity);
         }
     }//GEN-LAST:event_jButtonUpdateContractActionPerformed
 
