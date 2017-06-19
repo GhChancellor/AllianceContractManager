@@ -327,8 +327,8 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
 //            contractEntityForTable = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitle(userApiEntity.getId(), titleContract);
 //        }else{
 //            contractEntity.setStatusContract(jComboBoxStatusContract01.getSelectedItem().toString());
-        String status = jComboBoxStatusContract01.getSelectedItem().toString();
-        contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity.getId(), status, titleContract);
+//        String status = jComboBoxStatusContract01.getSelectedItem().toString();
+//        contractEntitys = ManagerSQLMicrimsDB.getInstance().getUserContractsByTitleStatus(userApiEntity.getId(), status, titleContract);
 //        }
 
         writeValueToTable(contractEntitys);

@@ -50,7 +50,7 @@ public class PseudoAlgoritmo {
 
         List<ContractXml> loadContractFromXML = this.loadContractFromXML(user); //2.0  OK
 
-        List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15,firstUpdate); //7 2.3)  OK
+        List<ContractXml> allContractsCompleted = this.getAllContractsCompleted(loadContractFromXML, nowMinus15, firstUpdate); //7 2.3)  OK
 
         for (ContractXml contractCompleted : allContractsCompleted) {
             this.fixClosedContract(contractCompleted);  // OK
@@ -87,8 +87,10 @@ public class PseudoAlgoritmo {
                     if (dateIssued.after(date)) {
                         contractXmls.add(contractXml);
                     }
+
                 }else{
                     contractXmls.add(contractXml);
+
                 }
             }
         }
@@ -111,7 +113,20 @@ public class PseudoAlgoritmo {
             Date dateIssued = parseStringToDate(contractXml.getDateIssued());
 
             if (dateIssued.after(date)) {
-                contractXmls.add(contractXml);
+
+//                boolean esiste = false;
+//                List<ContractEntity> contracts = ManagerSQLMicrimsDB.getInstance().getContracts();
+//                for (ContractEntity contract : contracts) {
+//                    if (contract.getContractID().equals(ccc.getContractID())) {
+//                        esiste = true;
+//                        break;
+//                    }
+//                }
+                
+                if (ManagerSQLMicrimsDB.getInstance().isThisIdAssignable(contractXml.getContractID())) {
+                    contractXmls.add(contractXml);
+                }
+
             }
         }
         return contractXmls;

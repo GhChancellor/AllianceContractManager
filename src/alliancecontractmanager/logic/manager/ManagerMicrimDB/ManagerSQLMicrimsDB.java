@@ -77,6 +77,32 @@ public class ManagerSQLMicrimsDB {
         }
     }
    
+    
+    //DBG LUCA
+    public boolean isContractExpired(ContractEntity contract){
+        if(contract.getStatusContract().equals(StatusEnum.EXPIRED.getStatus())){
+            return true;
+        }
+        if(new Date().after(contract.getDateExpiredUnformatted())){
+            return true;
+        }
+        return false;
+    }
+    
+    //DBG LUCA
+    public boolean isThisIdAssignable(String contractID){
+        
+        ContractEntity contract = getContractByEveId(contractID);
+        if(contract == null){
+            return true;
+        }else{
+            if(isContractExpired(contract)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
     /**
      * Write Contract In DB
      * @param contractEntity 
@@ -307,10 +333,11 @@ public class ManagerSQLMicrimsDB {
         }
     }
 
-     /**
+
+    /**
      * Get specific Contract ID ( Eve Id ) from Eve Server
-     * @param contractEntity
-     * @return 
+     * @param String contractId
+     * @return ContractEntity
      */
     public ContractEntity getContractByEveId(String contractId){
         try {
