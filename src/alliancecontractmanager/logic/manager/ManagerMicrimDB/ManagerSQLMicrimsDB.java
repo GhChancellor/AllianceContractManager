@@ -52,6 +52,9 @@ public class ManagerSQLMicrimsDB {
         return instance;
     }
 
+    public ContractEntity getContractEntityById(long id){
+        return contractEntityJpaController.findContractEntity(id);
+    }
     
     /**
      * Update contract ( change status, price.... )
