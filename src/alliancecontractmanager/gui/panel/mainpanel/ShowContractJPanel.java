@@ -404,6 +404,7 @@ public class ShowContractJPanel extends javax.swing.JPanel implements Listener {
               System.out.println("UPDATING...");
               algo.updateContract(userApiEntity);
         }
+        this.jTableShowContractModel1.reload();
     }//GEN-LAST:event_jButtonUpdateContractActionPerformed
 
 
