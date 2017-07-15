@@ -27,6 +27,7 @@ public class JTableShowGenericModel extends DefaultTableModel {
      * @param ContractEntity contractEntity
      */
     public void addContract(ContractEntity contractEntity) {
+        System.out.println("--- > "+contractEntity.getContractID() + " ID "+contractEntity.getId());
         this.dataVector.add(contractEntity);
     }
 
